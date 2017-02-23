@@ -1,0 +1,24 @@
+* Sea-Bird SBE 9 Data File:
+* FileName = C:\SEASOFT\LAPEROUSE\data\lape02.hdr
+* Software Version Seasave V 7.26.1.8
+* Temperature SN = 6083
+* Conductivity SN = 4355
+* Number of Bytes Per Scan = 48
+* Number of Voltage Words = 5
+* Number of Scans Averaged by the Deck Unit = 1
+* Append System Time to Every Scan
+* System UpLoad Time = Sep 22 2016 09:53:29
+* NMEA Latitude = 19 49.58 S
+* NMEA Longitude = 054 05.93 E
+* NMEA UTC (Time) = Sep 22 2016 09:53:29
+* Store Lat/Lon Data = Append to Every Scan
+** Cruise: LAPEROUSE 
+** Ship: ANTEA 
+** Station: 2
+** Bottom Depth: 2386
+** Pressure frequency switch pos 2 before station: 
+** Pressure frequency switch pos 2 after station: 
+** Operator: 
+** Comments: 
+* System UTC = Sep 22 2016 09:53:29
+*END*

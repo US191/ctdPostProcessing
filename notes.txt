@@ -1,0 +1,3 @@
+Run datacnv from windows command line:
+C:\git\ctdPostProcessing>datcnvw /ffr26001.cnv
+/iexamples/fr26/data/raw/fr26001.hex /oexamples/fr26/data/cnv /psbeProcessing/psa/DatCnv.psa /cexamples/fr26/data/raw/fr26001.xmlcon /s
