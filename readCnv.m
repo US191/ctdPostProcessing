@@ -1,23 +1,69 @@
-classdef readCnv
+classdef readCnv < handle
+  %readCnv construct object and read seabird cnv file(s)
+  %
+  %   Examples:
+  %
+  % r = readCnv  use uigetfile to select one or more files
+  % r = readCnv('fr26001.cnv')
+  %
+  % r =
+  %   readCnv with properties:
+  %
+  %            CTD_Type: 'SBE 9 '
+  %     Seasave_Version: '3.2'
+  %         Calibration: []
+  %             Profile: '1'
+  %             Datenum: 7.3640e+05
+  %              Latnum: 11.4650
+  %             Longnum: -23.0002
+  %          Plateforme: 'THALASSA'
+  %              Cruise: 'PIRATA-FR26'
+  %             Sensors: [10 hashtable]
+  %           Variables: [13 hashtable]
+  %
+  %  r.Sensors
+  % ...
+  %     'Frequency 0, Temperature'             '6083'
+  %     'Frequency 1, Conductivity'            '4509'
+  %     'Frequency 2, Pressure, Digiquar…'    '1263'
+  %     'Frequency 3, Temperature, 2'          '6086'
+  %     'Frequency 4, Conductivity, 2'         '4510'
+  %     'A/D voltage 0, Oxygen, SBE 43'        '3261'
+  %     'A/D voltage 1, Oxygen, SBE 43, 2'     '3265'
+  %     'A/D voltage 2, Transmissometer,…'    'CTS1210DR'
+  %     'A/D voltage 3, Fluorometer, WET…'    'FLRTD-1367'
+  %     'A/D voltage 4, Altimeter'             '61768'
+  %
+  % keys(r.Variables)
+  % values(r.Variables)
+  % temp = r.Variables('t190C')
+  % temp(1:5)
+  %    24.7254
+  %    24.7250
+  %    24.7248
+  %    24.7244
+  %    24.7246
+  %    ...
+  %
   % J. Grelet IRD US191 IMAGO - 2017
   
   properties   (Access = private)
     fileNames
+    VarList = hashtable;
   end
   
   properties (SetAccess = public)
     CTD_Type;
     Seasave_Version;
-    Sensor_TEMP_SN;
-    Sensor_CNDC_SN;
     Calibration;
     Profile;
     Datenum;            % internal Matlab date representation
     Latnum;
     Longnum;
-    Plateform;
+    Plateforme;
     Cruise;
-    Vars = containers.Map;
+    Sensors = hashtable;
+    Variables = hashtable;
   end
   
   methods % public methods
@@ -56,11 +102,11 @@ classdef readCnv
       
       fprintf(1, 'read file: %s\n', file);
       fid = fopen(file);
-  
+      
       % read the header
-      while ~feof(fid) 
-            tline = fgetl(fid);
-        disp(tline)
+      while ~feof(fid)
+        tline = fgetl(fid);
+        % disp(tline)
         if ~isempty(strfind(tline,'*END'))  % end of header
           break;
         end
@@ -87,24 +133,21 @@ classdef readCnv
           continue
         end
         
-        % extract Temperature sensor serial number
+        % extract sensors name and serial number to map
         % ex: * Temperature SN = 2441
         % ----------------------------------------
         match = regexp( tline,...
-          '^*\s*Temperature SN =\s*(\d+)', 'tokens');
+          '^#\s+<!--\s*(.*?)\s*-->', 'tokens');
         if ~isempty(match)
-          self.Sensor_TEMP_SN = match{1}{1};
-          continue
-        end
-        
-        % extract Conductivity sensor serial number
-        % ex: * Conductivity SN = 2072
-        % ----------------------------------------
-        match = regexp( tline,...
-          '^*\s*Conductivity SN =\s*(\d+)', 'tokens');
-        if ~isempty(match)
-          self.Sensor_CNDC_SN = match{1}{1};
-          continue
+          param = match{1}{1};
+          fgetl(fid);
+          tline = fgetl(fid);
+          match = regexp( tline,...
+            '^#\s+<SerialNumber>(.*?)</SerialNumber>', 'tokens');
+          if ~isempty(match)
+            self.Sensors(param) = match{1}{1};
+            continue
+          end
         end
         
         % extract date of launch
@@ -152,13 +195,13 @@ classdef readCnv
           continue
         end
         
-        % extract plateform name (eg ship or navire)
+        % extract Plateforme name (eg ship or navire)
         % ex: ** Ship: BIC Olaya
         % ----------------------
         match = regexp( tline,...
           '^**\s*Ship\s*:\s*(\w.+)$', 'tokens');
         if ~isempty(match)
-          self.Plateform = match{1}{1};
+          self.Plateforme = match{1}{1};
           continue
         end
         
@@ -190,11 +233,32 @@ classdef readCnv
         match = regexp( tline,...
           '^#\s*name\s*(\d+)\s*=\s*(.+):', 'tokens');
         if ~isempty(match)
-          self.Vars(match{1}{1}) = match{1}{2};
+          self.VarList(match{1}{1}) = match{1}{2};
           continue
         end
-       
+      end % end of header
+      
+      % get all keys in hashtable containing the list of columns name
+      % -------------------------------------------------------------
+      k = keys(self.VarList);
+      
+      % number of keys corresponding to column number to read
+      % -----------------------------------------------------
+      columns = length(k);
+      
+      % read the end-of-file
+      % --------------------
+      data = fscanf(fid, '%g', [columns,inf]);
+      data = data'; % transpose matrix
+      
+      % set oceano Data property with hashtable from matrix data
+      % --------------------------------------------------------
+      for i = k
+        ii = char(i);
+        ind = str2double(i);
+        self.Variables(self.VarList(ii)) = data(:,ind+1);
       end
+      
       fclose(fid);
     end % end of read
     
