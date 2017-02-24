@@ -46,8 +46,8 @@ classdef process < handle
                 'Position',[100 400 700 620],...
                 'Tag','MAIN_FIGURE',...
                 'MenuBar','figure',...
-                'Color', get( 0, 'DefaultUIControlBackgroundColor' ));
-            %'CloseRequestFcn', {@delete, self});
+                'Color', get( 0, 'DefaultUIControlBackgroundColor'),...
+                'CloseRequestFcn', {@(src,evt) delete(self)});
             
             self.hdlConfigPanel = uipanel(self.hdlFigure, ...
                 'title', 'Configuration informations', ...
@@ -64,26 +64,21 @@ classdef process < handle
         
         % destructor
         % ----------
-        function delete(src, ~, self)
+        function delete(self)
             % save configuration inside user preference directory, call static
             % method save_config
-            saveConfig(self);
+            process.SaveConfig(self);
             % close figure and listeners
-            if ~isempty(src) && ishandle(src)
-                delete(src);
-            end
+%             if ~isempty(src) && ishandle(src)
+%                 delete(src);
+%             end
             % self.deleteListeners;
-        end
-        
-        % display object
-        % --------------
-        function disp(self)
-            % do nothing
+            closereq;
         end
         
         % function setUitoolbar that define Toolbar
         % -----------------------------------------
-        function setUitoolbar(self)
+        function setUitoolbar(self) %#ok<MANU>
         end
         
         % function setUicontrols that define Uicontrols
@@ -91,29 +86,31 @@ classdef process < handle
         function setUicontrols(self)
             self.hdlRawDirText = uicontrol(self.hdlConfigPanel,...
                 'style', 'Text', ...
-                'String', 'Raw files directory', ...
-                'units', 'normalized', ...
-                'position', [0 0.89 0.45 0.02]);
+                'units', 'normalized',...
+                'position', [0.1 0.95 0.45 0.02],...
+                'HorizontalAlignment', 'left',...
+                'String', 'Raw files directory');
             
             self.hdlRawDir = uicontrol(self.hdlConfigPanel,...
                 'style', 'edit', ...
                 'units', 'normalized', ...
-                'position', [0.1 0.85 0.6 0.03], ...
+                'position', [0.1 0.91 0.6 0.03], ...
                 'tag', 'RAWDIR_EDIT', ...
                 'string', self.rawDir, ...
+                'HorizontalAlignment', 'left',...
                 'TooltipString', 'raw files directory .hex');
                 %'callback', {@get_mission_para, 'config_FILENAME'});
             
             self.hdlRawDirSelect = uicontrol(self.hdlConfigPanel,...
                 'string', 'Select', ...
                 'units', 'normalized', ...
-                'position', [0.71 0.85 0.1 0.03], ...
+                'position', [0.71 0.91 0.1 0.03], ...
                 'tag', 'RAWDIR_SELECT', ...
-                'callback', {@(src,evt) selectRawDir(self,src,evt)});
+                'callback', {@(src,evt) selectRawDir(self)});
             
         end % end of setUicontrols
         
-        function selectRawDir(self,~,~)
+        function selectRawDir(self)
             self.rawDir = uigetdir(self.rawDir);
             % add some tests
             set(self.hdlRawDir, 'string', self.rawDir);
@@ -128,7 +125,7 @@ classdef process < handle
         % save user preferences to MAT file in user preference directory
         %
         % -------------------------------------------------------------------
-        function saveConfig(self)
+        function SaveConfig(self)
             
             % save property values in struct
             % S.climatology_value = self.climatology_value; %#ok<STRNU>
@@ -138,7 +135,7 @@ classdef process < handle
         
         % load user preferences from  MAT file in user preference directory
         % -------------------------------------------------------------------
-        function loadConfig(self)
+        function LoadConfig(self)
             
             % test if configFile exist
             % -------------------------
@@ -146,7 +143,7 @@ classdef process < handle
                 
                 % load properties values from struct
                 % ----------------------------------
-                load( self.configFile, 'self');
+                load( self.configFile, 'v');
                 %self.map_value = S.map_value;
                 
                 
