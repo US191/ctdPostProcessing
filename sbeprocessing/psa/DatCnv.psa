@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Data_Conversion >
-  <Version value="7.23.2" />
+  <Version value="7.26.1.8" />
   <ServerName value="Data Conversion" />
-  <InstrumentPath value="H:\IRD\PIRATA\0-raw\xmlcon\fr26st001.xmlcon" />
+  <InstrumentPath value="C:\git\ctdPostProcessing\examples\fr26\data\raw\fr26040.xmlcon" />
   <InstrumentMatch value="0" />
-  <InputDir value="H:\IRD\PIRATA\0-raw\hex" />
+  <InputDir value="C:\git\ctdPostProcessing\examples\fr26\data\raw" />
   <InputFileArray size="1" GrowBy="-1" >
-    <ArrayItem index="0" value="fr26st001.hex" />
+    <ArrayItem index="0" value="fr26040.hex" />
   </InputFileArray>
-  <OutputDir value="H:\IRD\PIRATA\1-datcnv" />
+  <OutputDir value="C:\git\ctdPostProcessing\examples\fr26\data\cnv" />
   <NameAppend value="" />
-  <OutputFile value="fr26st001" />
+  <OutputFile value="fr26040" />
   <LastProcessed value="0" />
   <ProcessScansToEnd value="1" />
   <ScansToSkip value="0" />
@@ -24,67 +24,104 @@
   <ScanRangeDuration value="5.000000" />
   <StartTimeOption value="0" />
   <PromptForNoteAndOrStartTime value="0" />
-  <CalcArray Size="12" >
-    <CalcArrayItem index="0" CalcID="65" >
+  <CalcArray Size="18" >
+    <CalcArrayItem index="0" CalcID="72" >
+      <Calc UnitID="-1" Ordinal="0" >
+        <FullName value="Scan Count" />
+      </Calc>
+    </CalcArrayItem>
+    <CalcArrayItem index="1" CalcID="84" >
+      <Calc UnitID="27" Ordinal="0" >
+        <FullName value="Julian Days" />
+      </Calc>
+    </CalcArrayItem>
+    <CalcArrayItem index="2" CalcID="65" >
       <Calc UnitID="3" Ordinal="0" >
         <FullName value="Pressure, Digiquartz [db]" />
       </Calc>
     </CalcArrayItem>
-    <CalcArrayItem index="1" CalcID="81" >
+    <CalcArrayItem index="3" CalcID="17" >
+      <Calc UnitID="31" Ordinal="0" >
+        <FullName value="Depth [salt water, m]" />
+        <Latitude value="0.000000" />
+      </Calc>
+    </CalcArrayItem>
+    <CalcArrayItem index="4" CalcID="81" >
       <Calc UnitID="6" Ordinal="0" >
         <FullName value="Temperature [ITS-90, deg C]" />
       </Calc>
     </CalcArrayItem>
-    <CalcArrayItem index="2" CalcID="81" >
+    <CalcArrayItem index="5" CalcID="81" >
       <Calc UnitID="6" Ordinal="1" >
         <FullName value="Temperature, 2 [ITS-90, deg C]" />
       </Calc>
     </CalcArrayItem>
-    <CalcArrayItem index="3" CalcID="12" >
-      <Calc UnitID="41" Ordinal="0" >
-        <FullName value="Conductivity [mS/cm]" />
+    <CalcArrayItem index="6" CalcID="12" >
+      <Calc UnitID="58" Ordinal="0" >
+        <FullName value="Conductivity [S/m]" />
       </Calc>
     </CalcArrayItem>
-    <CalcArrayItem index="4" CalcID="12" >
-      <Calc UnitID="41" Ordinal="1" >
-        <FullName value="Conductivity, 2 [mS/cm]" />
+    <CalcArrayItem index="7" CalcID="12" >
+      <Calc UnitID="58" Ordinal="1" >
+        <FullName value="Conductivity, 2 [S/m]" />
       </Calc>
     </CalcArrayItem>
-    <CalcArrayItem index="5" CalcID="57" >
+    <CalcArrayItem index="8" CalcID="57" >
       <Calc UnitID="63" Ordinal="0" >
         <FullName value="Oxygen raw, SBE 43 [V]" />
         <ApplyHysteresisCorrection value="0" />
       </Calc>
     </CalcArrayItem>
-    <CalcArrayItem index="6" CalcID="57" >
+    <CalcArrayItem index="9" CalcID="57" >
       <Calc UnitID="63" Ordinal="1" >
         <FullName value="Oxygen raw, SBE 43, 2 [V]" />
         <ApplyHysteresisCorrection value="0" />
       </Calc>
     </CalcArrayItem>
-    <CalcArrayItem index="7" CalcID="39" >
+    <CalcArrayItem index="10" CalcID="55" >
+      <Calc UnitID="68" Ordinal="1" >
+        <FullName value="Oxygen, SBE 43, 2 [dov/dt]" />
+        <WindowSize value="2.000000" />
+        <ApplyHysteresisCorrection value="0" />
+        <ApplyTauCorrection value="0" />
+      </Calc>
+    </CalcArrayItem>
+    <CalcArrayItem index="11" CalcID="55" >
+      <Calc UnitID="68" Ordinal="0" >
+        <FullName value="Oxygen, SBE 43 [dov/dt]" />
+        <WindowSize value="2.000000" />
+        <ApplyHysteresisCorrection value="0" />
+        <ApplyTauCorrection value="0" />
+      </Calc>
+    </CalcArrayItem>
+    <CalcArrayItem index="12" CalcID="39" >
       <Calc UnitID="4" Ordinal="0" >
         <FullName value="Latitude [deg]" />
       </Calc>
     </CalcArrayItem>
-    <CalcArrayItem index="8" CalcID="40" >
+    <CalcArrayItem index="13" CalcID="40" >
       <Calc UnitID="4" Ordinal="0" >
         <FullName value="Longitude [deg]" />
       </Calc>
     </CalcArrayItem>
-    <CalcArrayItem index="9" CalcID="84" >
-      <Calc UnitID="27" Ordinal="0" >
-        <FullName value="Julian Days" />
-      </Calc>
-    </CalcArrayItem>
-    <CalcArrayItem index="10" CalcID="84" >
+    <CalcArrayItem index="14" CalcID="84" >
       <Calc UnitID="52" Ordinal="0" >
         <FullName value="Time, Elapsed [seconds]" />
       </Calc>
     </CalcArrayItem>
-    <CalcArrayItem index="11" CalcID="72" >
-      <Calc UnitID="-1" Ordinal="0" >
-        <FullName value="Scan Count" />
+    <CalcArrayItem index="15" CalcID="125" >
+      <Calc UnitID="52" Ordinal="0" >
+        <FullName value="Time, NMEA [seconds]" />
+      </Calc>
+    </CalcArrayItem>
+    <CalcArrayItem index="16" CalcID="93" >
+      <Calc UnitID="38" Ordinal="0" >
+        <FullName value="Fluorescence, WET Labs ECO-AFL/FL [mg/m^3]" />
+      </Calc>
+    </CalcArrayItem>
+    <CalcArrayItem index="17" CalcID="179" >
+      <Calc UnitID="46" Ordinal="0" >
+        <FullName value="Beam Transmission, WET Labs C-Star [%]" />
       </Calc>
     </CalcArrayItem>
   </CalcArray>
@@ -95,7 +132,7 @@
       <WindowSize value="2.000000" />
     </DescentRateAndAcceleration>
     <Oxygen >
-      <WindowSize value="0.000000" />
+      <WindowSize value="2.000000" />
       <ApplyHysteresisCorrection value="0" />
       <ApplyTauCorrection value="0" />
     </Oxygen>
