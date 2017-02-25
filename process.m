@@ -1,157 +1,218 @@
 classdef process < handle
-    %process
-    %
-    %
-    % J. Grelet IRD US191 IMAGO - 2017
+  %process
+  %
+  %
+  % J. Grelet IRD US191 IMAGO - 2017
+  
+  properties (Access = private)
+    % get pathname
+    DEFAULT_PATH_FILE;
+    ProfileName
+    rawDir
+    cnvDir
+    psaDir
     
-    properties % public
-        % get pathname
-        DEFAULT_PATH_FILE;
-        ProfileName
-        rawDir
-        cnvDir
-        psaDir
-        
-        % define where save user preferences
-        configFile           = [prefdir, filesep, mfilename, '.mat'];
+    % define where save user preferences
+    configFile           = [prefdir, filesep, mfilename, '.mat'];
+  end
+  
+  properties (Access = private, SetObservable)
+    hdlFigure;
+    hdlConfigPanel;
+    hdlRawDirText;
+    hdlRawDir
+    hdlRawDirSelect;
+    hdlCnvDirText;
+    hdlCnvDir
+    hdlCnvDirSelect;
+    hdlPsaDirText;
+    hdlPsaDir;
+    hdlPsaDirSelect;
+  end
+  
+  methods % public
+    % constructor
+    % -----------
+    function self = process(varargin)
+      
+      % initialize the default path
+      self.DEFAULT_PATH_FILE = fileparts(mfilename('fullpath'));
+      
+      % define main interface
+      % call destructor when user close the main windows
+      self.hdlFigure = figure( ...
+        'Name','Processing Seabird',...
+        'NumberTitle', 'off', ...
+        'MenuBar', 'None',...
+        'Toolbar', 'None', ...
+        'WindowStyle', 'normal', ...
+        'numbertitle', 'off',...
+        'HandleVisibility','on',...
+        'Position',[100 400 700 620],...
+        'Tag','MAIN_FIGURE',...
+        'MenuBar','figure',...
+        'Color', get( 0, 'DefaultUIControlBackgroundColor'),...
+        'CloseRequestFcn', {@(src,evt) delete(self)});
+      
+      self.hdlConfigPanel = uipanel(self.hdlFigure, ...
+        'title', 'Configuration informations', ...
+        'position', [0. 0 1 1], ...
+        'tag', 'CONFIG_PANEL', ...
+        'visible', 'on');
+      
+      % load configuration from mat file
+      loadObj(self);
+      
+      % call function that define the GUI
+      self.setUitoolbar;
+      self.setUicontrols;
+      
+    end % end of constructor process
+    
+    % destructor
+    % ----------
+    function delete(self)
+      % save configuration inside user preference directory, call static
+      % method save_config
+      saveObj(self);
+      % close figure and listeners
+      %             if ~isempty(src) && ishandle(src)
+      %                 delete(src);
+      %             end
+      % self.deleteListeners;
+      closereq;
     end
     
-    properties (Access = public, SetObservable)
-        hdlFigure;
-        hdlConfigPanel;
-        hdlRawDirText;
-        hdlRawDir
-        hdlRawDirSelect;
+    % function setUitoolbar that define Toolbar
+    % -----------------------------------------
+    function setUitoolbar(self) %#ok<MANU>
     end
     
-    methods % public
-        % constructor
-        % -----------
-        function self = process(varargin)
-            
-            % initialize the default path
-            self.DEFAULT_PATH_FILE = fileparts(mfilename('fullpath'));
-            
-            % define main interface
-            % call destructor when user close the main windows
-            % ------------------------------------------------
-            self.hdlFigure = figure( ...
-                'Name','Processing Seabird',...
-                'NumberTitle', 'off', ...
-                'MenuBar', 'None',...
-                'Toolbar', 'None', ...
-                'WindowStyle', 'normal', ...
-                'numbertitle', 'off',...
-                'HandleVisibility','on',...
-                'Position',[100 400 700 620],...
-                'Tag','MAIN_FIGURE',...
-                'MenuBar','figure',...
-                'Color', get( 0, 'DefaultUIControlBackgroundColor'),...
-                'CloseRequestFcn', {@(src,evt) delete(self)});
-            
-            self.hdlConfigPanel = uipanel(self.hdlFigure, ...
-                'title', 'Configuration informations', ...
-                'position', [0. 0 1 1], ...
-                'tag', 'CONFIG_PANEL', ...
-                'visible', 'on');
-            
-            % call function that define the GUI
-            % ---------------------------------
-            self.setUitoolbar;
-            self.setUicontrols;
-            
-        end % end of constructor process
-        
-        % destructor
-        % ----------
-        function delete(self)
-            % save configuration inside user preference directory, call static
-            % method save_config
-            process.SaveConfig(self);
-            % close figure and listeners
-%             if ~isempty(src) && ishandle(src)
-%                 delete(src);
-%             end
-            % self.deleteListeners;
-            closereq;
-        end
-        
-        % function setUitoolbar that define Toolbar
-        % -----------------------------------------
-        function setUitoolbar(self) %#ok<MANU>
-        end
-        
-        % function setUicontrols that define Uicontrols
-        % ---------------------------------------------
-        function setUicontrols(self)
-            self.hdlRawDirText = uicontrol(self.hdlConfigPanel,...
-                'style', 'Text', ...
-                'units', 'normalized',...
-                'position', [0.1 0.95 0.45 0.02],...
-                'HorizontalAlignment', 'left',...
-                'String', 'Raw files directory');
-            
-            self.hdlRawDir = uicontrol(self.hdlConfigPanel,...
-                'style', 'edit', ...
-                'units', 'normalized', ...
-                'position', [0.1 0.91 0.6 0.03], ...
-                'tag', 'RAWDIR_EDIT', ...
-                'string', self.rawDir, ...
-                'HorizontalAlignment', 'left',...
-                'TooltipString', 'raw files directory .hex');
-                %'callback', {@get_mission_para, 'config_FILENAME'});
-            
-            self.hdlRawDirSelect = uicontrol(self.hdlConfigPanel,...
-                'string', 'Select', ...
-                'units', 'normalized', ...
-                'position', [0.71 0.91 0.1 0.03], ...
-                'tag', 'RAWDIR_SELECT', ...
-                'callback', {@(src,evt) selectRawDir(self)});
-            
-        end % end of setUicontrols
-        
-        function selectRawDir(self)
-            self.rawDir = uigetdir(self.rawDir);
-            % add some tests
-            set(self.hdlRawDir, 'string', self.rawDir);
-        end
-        
-    end % end of public methods
+    % function setUicontrols that define Uicontrols
+    % ---------------------------------------------
+    function setUicontrols(self)
+      self.hdlRawDirText = uicontrol(self.hdlConfigPanel,...
+        'style', 'Text', ...
+        'units', 'normalized',...
+        'position', [0.1 0.95 0.45 0.02],...
+        'HorizontalAlignment', 'left',...
+        'String', 'Raw files directory');
+      
+      self.hdlRawDir = uicontrol(self.hdlConfigPanel,...
+        'style', 'edit', ...
+        'units', 'normalized', ...
+        'position', [0.1 0.91 0.6 0.03], ...
+        'tag', 'RAWDIR_EDIT', ...
+        'string', self.rawDir, ...
+        'HorizontalAlignment', 'left',...
+        'TooltipString', 'raw files directory .hex');
+      
+      self.hdlRawDirSelect = uicontrol(self.hdlConfigPanel,...
+        'string', 'Select', ...
+        'units', 'normalized', ...
+        'position', [0.71 0.91 0.1 0.03], ...
+        'tag', 'RAWDIR_SELECT', ...
+        'callback', {@(src,evt) selectRawDir(self)});
+      
+      self.hdlCnvDirText = uicontrol(self.hdlConfigPanel,...
+        'style', 'Text', ...
+        'units', 'normalized',...
+        'position', [0.1 0.85 0.45 0.02],...
+        'HorizontalAlignment', 'left',...
+        'String', 'Cnv files directory');
+      
+      self.hdlCnvDir = uicontrol(self.hdlConfigPanel,...
+        'style', 'edit', ...
+        'units', 'normalized', ...
+        'position', [0.1 0.81 0.6 0.03], ...
+        'tag', 'CNVDIR_EDIT', ...
+        'string', self.cnvDir, ...
+        'HorizontalAlignment', 'left',...
+        'TooltipString', 'raw files directory .hex');
+      
+      self.hdlCnvDirSelect = uicontrol(self.hdlConfigPanel,...
+        'string', 'Select', ...
+        'units', 'normalized', ...
+        'position', [0.71 0.81 0.1 0.03], ...
+        'tag', 'PSADIR_SELECT', ...
+        'callback', {@(src,evt) selectCnvDir(self)});
+      
+      self.hdlPsaDirText = uicontrol(self.hdlConfigPanel,...
+        'style', 'Text', ...
+        'units', 'normalized',...
+        'position', [0.1 0.75 0.45 0.02],...
+        'HorizontalAlignment', 'left',...
+        'String', 'Psa files directory');
+      
+      self.hdlPsaDir = uicontrol(self.hdlConfigPanel,...
+        'style', 'edit', ...
+        'units', 'normalized', ...
+        'position', [0.1 0.71 0.6 0.03], ...
+        'tag', 'RAWDIR_EDIT', ...
+        'string', self.psaDir, ...
+        'HorizontalAlignment', 'left',...
+        'TooltipString', 'raw files directory .hex');
+      
+      self.hdlPsaDirSelect = uicontrol(self.hdlConfigPanel,...
+        'string', 'Select', ...
+        'units', 'normalized', ...
+        'position', [0.71 0.71 0.1 0.03], ...
+        'tag', 'RAWDIR_SELECT', ...
+        'callback', {@(src,evt) selectPsaDir(self)});
+      
+    end % end of setUicontrols
     
-    % static methods
-    % ---------------
-    methods(Static)
-        
-        % save user preferences to MAT file in user preference directory
-        %
-        % -------------------------------------------------------------------
-        function SaveConfig(self)
-            
-            % save property values in struct
-            % S.climatology_value = self.climatology_value; %#ok<STRNU>
-            save( self.configFile, 'self', '-v7.3')
-            % return struct for save function to write to MAT-file
-        end
-        
-        % load user preferences from  MAT file in user preference directory
-        % -------------------------------------------------------------------
-        function LoadConfig(self)
-            
-            % test if configFile exist
-            % -------------------------
-            if exist(self.configFile, 'file') == 2
-                
-                % load properties values from struct
-                % ----------------------------------
-                load( self.configFile, 'v');
-                %self.map_value = S.map_value;
-                
-                
-            end
-            
-        end % end of loadConfig method
-        
-    end % end of static methods
+    function selectRawDir(self)
+      self.rawDir = uigetdir();
+      % when cancel is pressed uigetdir return 0
+      if self.rawDir == 0; self.rawDir = []; end
+      set(self.hdlRawDir, 'string', self.rawDir);
+    end
     
-end
+    function selectCnvDir(self)
+     self.cnvDir = uigetdir();
+      % when cancel is pressed uigetdir return 0
+      if self.cnvDir == 0; self.cnvDir = []; end
+      set(self.hdlCnvDir, 'string', self.cnvDir);
+    end
+    
+    function selectPsaDir(self)
+      self.psaDir = uigetdir();
+      % when cancel is pressed uigetdir return 0
+      if self.psaDir == 0; self.psaDir = []; end
+      set(self.hdlPsaDir, 'string', self.psaDir);
+    end
+    
+    % save user preferences to MAT file in user preference directory
+    % -------------------------------------------------------------------
+    function s = saveObj(self)
+      
+      % save property values in struct
+      s.rawDir = self.rawDir;
+      s.cnvDir = self.cnvDir;
+      s.psaDir = self.psaDir;
+      save( self.configFile, 's', '-v7.3')
+    end % end of saveObj
+    
+    % load user preferences from  MAT file in user preference directory
+    % -------------------------------------------------------------------
+    function loadObj(self)
+      
+      % test if configFile exist
+      % -------------------------
+      if exist(self.configFile, 'file') == 2
+        
+        % load properties values from struct
+        % ----------------------------------
+        load( self.configFile, 's');
+        self.rawDir = s.rawDir;
+        self.cnvDir = s.cnvDir;
+        self.psaDir = s.psaDir;
+      end
+      
+    end % end of loadObj
+    
+  end % end of public methods
+  
+end % end of class process
 
