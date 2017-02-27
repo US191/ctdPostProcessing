@@ -7,7 +7,7 @@
     <ArrayItem index="0" value="fr26041.cnv" />
   </InputFileArray>
   <OutputDir value="C:\git\ctdPostProcessing\examples\fr26\data\cnv" />
-  <NameAppend value="d" />
+  <NameAppend value="" />
   <OutputFile value="fr26041.cnv" />
   <LastProcessed value="0" />
   <BinType value="0" />
