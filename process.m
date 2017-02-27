@@ -241,8 +241,9 @@ classdef process < handle
      
      function selectProfileNumber(self, src )
        self.profileNumber =  get(src, 'string');
-    end
+     end
     
+    % only for testing sbe-processing without sbebatch
     function execDatcnv(self)
       station = strcat(self.cruisePrefix, self.profileNumber);
       datcnv = sprintf('!datcnvw /f%s.cnv /i%s/%s.hex /o%s /p%s/datcnv.psa /c%s/%s.xmlcon /s', ...
