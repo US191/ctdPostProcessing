@@ -17,17 +17,18 @@ classdef process < handle
   end
   
   properties (Access = private, SetObservable)
-    hdlFigure;
-    hdlConfigPanel;
-    hdlRawDirText;
+    hdlFigure
+    hdlConfigPanel
+    hdlRawDirText
     hdlRawDir
-    hdlRawDirSelect;
-    hdlCnvDirText;
+    hdlRawDirSelect
+    hdlCnvDirText
     hdlCnvDir
-    hdlCnvDirSelect;
-    hdlPsaDirText;
+    hdlCnvDirSelect
+    hdlPsaDirText
     hdlPsaDir;
-    hdlPsaDirSelect;
+    hdlPsaDirSelect
+    hdlDatcnvExec
   end
   
   methods % public
@@ -159,6 +160,14 @@ classdef process < handle
         'position', [0.71 0.71 0.1 0.03], ...
         'tag', 'RAWDIR_SELECT', ...
         'callback', {@(src,evt) selectPsaDir(self)});
+    
+    % exec
+          self.hdlDatcnvExec = uicontrol(self.hdlConfigPanel,...
+        'string', 'Execute', ...
+        'units', 'normalized', ...
+        'position', [0.71 0.61 0.1 0.03], ...
+        'tag', 'DATCNV_EXEC', ...
+        'callback', {@(src,evt) execDatcnv(self)});
       
     end % end of setUicontrols
     
@@ -181,6 +190,14 @@ classdef process < handle
       % when cancel is pressed uigetdir return 0
       if self.psaDir == 0; self.psaDir = []; end
       set(self.hdlPsaDir, 'string', self.psaDir);
+    end
+    
+      function execDatcnv(self)
+      station = 'fr26041';
+      cmd = sprintf('!datcnvw /f%s.cnv /i%s/%s.hex /o%s /p%s/datcnv.psa /c%s/%s.xmlcon /s', ...
+          station, self.rawDir, station, self.cnvDir, self.psaDir, ...
+          self.rawDir, station);
+      evalc(cmd);
     end
     
     % save user preferences to MAT file in user preference directory
