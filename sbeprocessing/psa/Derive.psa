@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Derive >
+  <Version value="7.23.2" />
+  <ServerName value="Derive" />
+  <InstrumentPath value="m:\PIRATA-FR26\data-processing\CTD\data\raw\fr26001.xmlcon" />
+  <InstrumentMatch value="0" />
+  <InputDir value="m:\PIRATA-FR26\data-processing\CTD\data\tmp" />
+  <InputFileArray size="1" GrowBy="-1" >
+    <ArrayItem index="0" value="fr26001.cnv" />
+  </InputFileArray>
+  <OutputDir value="m:\PIRATA-FR26\data-processing\CTD\data\tmp" />
+  <NameAppend value="" />
+  <OutputFile value="fr26001.cnv" />
+  <LastProcessed value="0" />
+  <CalcArray Size="8" >
+    <CalcArrayItem index="0" CalcID="55" >
+      <Calc UnitID="61" Ordinal="0" >
+        <FullName value="Oxygen, SBE 43 [umol/Kg]" />
+        <WindowSize value="2.000000" />
+      </Calc>
+    </CalcArrayItem>
+    <CalcArrayItem index="1" CalcID="55" >
+      <Calc UnitID="61" Ordinal="1" >
+        <FullName value="Oxygen, SBE 43, 2 [umol/Kg]" />
+        <WindowSize value="2.000000" />
+      </Calc>
+    </CalcArrayItem>
+    <CalcArrayItem index="2" CalcID="70" >
+      <Calc UnitID="49" Ordinal="0" >
+        <FullName value="Salinity, Practical [PSU]" />
+      </Calc>
+    </CalcArrayItem>
+    <CalcArrayItem index="3" CalcID="70" >
+      <Calc UnitID="49" Ordinal="1" >
+        <FullName value="Salinity, Practical, 2 [PSU]" />
+      </Calc>
+    </CalcArrayItem>
+    <CalcArrayItem index="4" CalcID="15" >
+      <Calc UnitID="53" Ordinal="0" >
+        <FullName value="Density [sigma-theta, Kg/m^3]" />
+      </Calc>
+    </CalcArrayItem>
+    <CalcArrayItem index="5" CalcID="15" >
+      <Calc UnitID="53" Ordinal="1" >
+        <FullName value="Density, 2 [sigma-theta, Kg/m^3]" />
+      </Calc>
+    </CalcArrayItem>
+    <CalcArrayItem index="6" CalcID="74" >
+      <Calc UnitID="33" Ordinal="0" >
+        <FullName value="Sound Velocity [Chen-Millero, m/s]" />
+      </Calc>
+    </CalcArrayItem>
+    <CalcArrayItem index="7" CalcID="74" >
+      <Calc UnitID="33" Ordinal="1" >
+        <FullName value="Sound Velocity, 2 [Chen-Millero, m/s]" />
+      </Calc>
+    </CalcArrayItem>
+  </CalcArray>
+  <MiscellaneousDataForCalculations >
+    <Latitude value="0.000000" />
+    <DescentRateAndAcceleration >
+      <WindowSize value="2.000000" />
+    </DescentRateAndAcceleration>
+    <Oxygen >
+      <WindowSize value="2.000000" />
+      <ApplyHysteresisCorrection value="0" />
+      <ApplyTauCorrection value="0" />
+    </Oxygen>
+    <AverageSoundVelocity >
+      <MinimumPressure value="20.000000" />
+      <MinimumSalinity value="20.000000" />
+      <PressureWindowSize value="20.000000" />
+      <TimeWindowSize value="60.000000" />
+    </AverageSoundVelocity>
+    <PlumeAnomaly >
+      <ThetaB value="0.000000" />
+      <SalinityB value="0.000000" />
+      <ThetaZSalinityZRatio value="0.000000" />
+      <ReferencePressure value="0.000000" />
+    </PlumeAnomaly>
+    <PotentialTempAnomaly >
+      <A0 value="0.000000" />
+      <A1 value="0.000000" />
+      <A1Multiplier value="0" />
+    </PotentialTempAnomaly>
+  </MiscellaneousDataForCalculations>
+</Derive>

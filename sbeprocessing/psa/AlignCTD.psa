@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Align_CTD >
+  <Version value="7.23.2" />
+  <ServerName value="Align CTD" />
+  <InputDir value="m:\PIRATA-FR26\data-processing\CTD\data\tmp" />
+  <InputFileArray size="1" GrowBy="-1" >
+    <ArrayItem index="0" value="fr26001.cnv" />
+  </InputFileArray>
+  <OutputDir value="m:\PIRATA-FR26\data-processing\CTD\data\tmp" />
+  <NameAppend value="" />
+  <OutputFile value="fr26001.cnv" />
+  <LastProcessed value="0" />
+  <CalcArray Size="6" >
+    <CalcArrayItem index="0" CalcID="81" >
+      <Calc UnitID="6" Ordinal="0" >
+        <FullName value="Temperature [ITS-90, deg C]" />
+      </Calc>
+    </CalcArrayItem>
+    <CalcArrayItem index="1" CalcID="81" >
+      <Calc UnitID="6" Ordinal="1" >
+        <FullName value="Temperature, 2 [ITS-90, deg C]" />
+      </Calc>
+    </CalcArrayItem>
+    <CalcArrayItem index="2" CalcID="12" >
+      <Calc UnitID="58" Ordinal="0" >
+        <FullName value="Conductivity [S/m]" />
+      </Calc>
+    </CalcArrayItem>
+    <CalcArrayItem index="3" CalcID="12" >
+      <Calc UnitID="58" Ordinal="1" >
+        <FullName value="Conductivity, 2 [S/m]" />
+      </Calc>
+    </CalcArrayItem>
+    <CalcArrayItem index="4" CalcID="57" >
+      <Calc UnitID="63" Ordinal="0" >
+        <FullName value="Oxygen raw, SBE 43 [V]" />
+        <ApplyHysteresisCorrection value="0" />
+      </Calc>
+    </CalcArrayItem>
+    <CalcArrayItem index="5" CalcID="57" >
+      <Calc UnitID="63" Ordinal="1" >
+        <FullName value="Oxygen raw, SBE 43, 2 [V]" />
+        <ApplyHysteresisCorrection value="0" />
+      </Calc>
+    </CalcArrayItem>
+  </CalcArray>
+  <ValArray size="15" >
+    <ValArrayItem index="0" value="0.000000" variable_name="Temperature" />
+    <ValArrayItem index="1" value="0.000000" variable_name="Temperature" />
+    <ValArrayItem index="2" value="0.000000" variable_name="Conductivity" />
+    <ValArrayItem index="3" value="0.000000" variable_name="Conductivity" />
+    <ValArrayItem index="4" value="2.000000" variable_name="Oxygen raw, SBE 43" />
+    <ValArrayItem index="5" value="2.000000" variable_name="Oxygen raw, SBE 43" />
+  </ValArray>
+</Align_CTD>

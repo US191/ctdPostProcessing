@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bin_Average >
+  <Version value="7.23.2" />
+  <ServerName value="Bin Average" />
+  <InputDir value="m:\PIRATA-FR26\data-processing\CTD\data\tmp" />
+  <InputFileArray size="1" GrowBy="-1" >
+    <ArrayItem index="0" value="fr26001.cnv" />
+  </InputFileArray>
+  <OutputDir value="m:\PIRATA-FR26\data-processing\CTD\data\cnv" />
+  <NameAppend value="" />
+  <OutputFile value="fr26001u.cnv" />
+  <LastProcessed value="0" />
+  <BinType value="0" />
+  <BinSize value="1.000000" />
+  <IncludeNumberScans value="1" />
+  <ExcludeMarkedBad value="1" />
+  <ScansToSkip value="0" />
+  <CastToProcess value="2" high="2" low="0" initialValue="0" />
+  <IncludeSurfaceBin value="1" />
+  <SurfaceBinMinVal value="0.000000" />
+  <SurfaceBinMaxVal value="2.000000" />
+  <SurfaceBinVal value="0.000000" />
+</Bin_Average>

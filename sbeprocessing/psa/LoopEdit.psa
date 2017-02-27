@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Loop_Edit >
+  <Version value="7.23.2" />
+  <ServerName value="Loop Edit" />
+  <InputDir value="m:\PIRATA-FR26\data-processing\CTD\data\tmp" />
+  <InputFileArray size="1" GrowBy="-1" >
+    <ArrayItem index="0" value="fr26001.cnv" />
+  </InputFileArray>
+  <OutputDir value="m:\PIRATA-FR26\data-processing\CTD\data\tmp" />
+  <NameAppend value="" />
+  <OutputFile value="fr26001.cnv" />
+  <LastProcessed value="0" />
+  <MinVelocityType value="0" high="1" low="0" initialValue="0" />
+  <MinCTD_Velocity value="0.000000" />
+  <TimeWindowSize value="300.000000" />
+  <PercentMeanSpeed value="20.000000" />
+  <ExcludeMarkedBad value="1" />
+  <RemoveSurfaceSoak value="0" />
+  <UseDeckPressure value="1" />
+  <SurfaceSoakDepth value="30.000000" />
+  <SurfaceSoakDepthMin value="15.000000" />
+  <SurfaceSoakDepthMax value="40.000000" />
+</Loop_Edit>
