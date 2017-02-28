@@ -4,17 +4,17 @@ classdef process < handle
   %
   % J. Grelet IRD US191 IMAGO - 2017
   
-  properties (Access = private)
-    % get pathname
-    DEFAULT_PATH_FILE;
-    ProfileName
+  properties (Access = public)
     rawDir
     cnvDir
     psaDir
-    cruisePrefix = ''
-    profileNumber = 0
-    
-    % define where save user preferences
+    cruisePrefix 
+    profileNumber 
+  end
+  
+   properties (Access = private)
+
+    % define location of user preferences mat file
     configFile           = [prefdir, filesep, mfilename, '.mat'];
   end
   
@@ -38,14 +38,11 @@ classdef process < handle
   end
   
   methods % public
-    % constructor
-    % -----------
+      
+    % constructor, define main interface
+    % ----------------------------------
     function self = process(varargin)
       
-      % initialize the default path
-      self.DEFAULT_PATH_FILE = fileparts(mfilename('fullpath'));
-      
-      % define main interface
       % call destructor when user close the main windows
       self.hdlFigure = figure( ...
         'Name','Processing Seabird',...
@@ -214,6 +211,7 @@ classdef process < handle
     end % end of setUicontrols
     
     % callbacks
+    % ---------
     function selectRawDir(self)
       self.rawDir = uigetdir();
       % when cancel is pressed uigetdir return 0
@@ -297,14 +295,14 @@ classdef process < handle
     % -------------------------------------------------------------------
     function loadObj(self)
       
+      s = saveToStruct(self);
+      
       % test if configFile exist
-      % -------------------------
       if exist(self.configFile, 'file') == 2
         
         % TODOS: add version tag, if change, reload an new empty struct
         
         % load properties values from struct
-        % ----------------------------------
         load( self.configFile, 's');
         self.rawDir = s.rawDir;
         self.cnvDir = s.cnvDir;
@@ -316,6 +314,18 @@ classdef process < handle
     end % end of loadObj
     
   end % end of public methods
+  
+  methods (Access = private) 
+      
+      % use this function instead of struct(self)
+      % ----------------------------------------
+      function s = saveToStruct(self)
+          props = properties(self);
+          for p = 1:numel(props)          
+              s.(props{p}) = self.(props{p});             
+          end
+      end % end of saveToStruct
+  end % end of  private methods
   
 end % end of class process
 
