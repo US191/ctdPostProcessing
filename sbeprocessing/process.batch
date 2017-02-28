@@ -1,0 +1,8 @@
+datcnv    /f%1.cnv  /i%2\%1.hex  /o%3 /p%4\Datcnv.psa          /c%2\%1.xmlcon
+filter    /f%1.cnv  /i%3\%1.cnv  /o%3 /p%4\Filter.psa          /c%2\%1.xmlcon
+alignctd  /f%1.cnv  /i%3\%1.cnv  /o%3 /p%4\Alignctd.psa        /c%2\%1.xmlcon
+celltm    /f%1.cnv  /i%3\%1.cnv  /o%3 /p%4\Celltm.psa          /c%2\%1.xmlcon
+loopedit  /f%1.cnv  /i%3\%1.cnv  /o%3 /p%4\Loopedit.psa        /c%2\%1.xmlcon
+derive    /f%1.cnv  /i%3\%1.cnv  /o%3 /p%4\Derive.psa          /c%2\%1.xmlcon
+binavg    /fd%1.cnv /i%3\%1.cnv  /o%3 /p%4\BinAvg_downcast.psa /c%2\%1.xmlcon
+binavg    /fu%1.cnv /i%3\%1.cnv  /o%3 /p%4\BinAvg_upcast.psa   /c%2\%1.xmlcon
