@@ -378,7 +378,7 @@ classdef hashtable < handle
                 %fprintf(' AutoAccess:     %s\n\n',    theAutoAccess);
           
             if ~isEmpty(self)
-                fprintf('\n');
+                %fprintf('\n');
                 display( elements(self) );
             end
             % disp('list of <a href="matlab:methods(''hashtable'')">methods</a>');

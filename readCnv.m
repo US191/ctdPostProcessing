@@ -1,42 +1,111 @@
-classdef readCnv < hashtable
+classdef readCnv < handle
   %readCnv construct object and read seabird cnv file(s)
   %
   %   Examples:
   %
   % r = readCnv  use uigetfile to select one or more files
-  % r = readCnv('examples/fr26/data/raw/fr26001.hex')
+  % r = readCnv('C:\git\ctdPostProcessing\examples\fr26\data\cnv\dfr26001.cnv')
+  % read file: C:\git\ctdPostProcessing\examples\fr26\data\cnv\dfr26001.cnv
   %
   % r =
-  %   readCnv with properties:
   %
-  %            CTD_Type: 'SBE 9 '
-  %     Seasave_Version: '3.2'
-  %         Calibration: []
-  %             Profile: '1'
-  %             Datenum: 7.3640e+05
-  %              Latnum: 11.4650
-  %             Longnum: -23.0002
-  %          Plateforme: 'THALASSA'
-  %              Cruise: 'PIRATA-FR26'
-  %             Sensors: [10 hashtable]
-  %           Variables: [13 hashtable]
+  % 	cruise:          PIRATA-FR26
+  % 	plateforme:      THALASSA
+  % 	profile:         1
+  % 	date:             736398.728414
+  % 	julian:          24174.728414
+  % 	latitude:        11.465000
+  % 	longitude:       -23.000167
+  % 	ctdType:         SBE 9
+  % 	seasaveVersion:  3.2
   %
-  %  r.Sensors
-  % ...
-  %     'Frequency 0, Temperature'             '6083'
-  %     'Frequency 1, Conductivity'            '4509'
-  %     'Frequency 2, Pressure, Digiquar…'    '1263'
-  %     'Frequency 3, Temperature, 2'          '6086'
-  %     'Frequency 4, Conductivity, 2'         '4510'
-  %     'A/D voltage 0, Oxygen, SBE 43'        '3261'
-  %     'A/D voltage 1, Oxygen, SBE 43, 2'     '3265'
-  %     'A/D voltage 2, Transmissometer,…'    'CTS1210DR'
-  %     'A/D voltage 3, Fluorometer, WET…'    'FLRTD-1367'
-  %     'A/D voltage 4, Altimeter'             '61768'
+  % varNames:
+  %   27×2 cell array
   %
-  % keys(r.Variables)
-  % values(r.Variables)
-  % temp = r.Variables('t190C')
+  %     'scan'          'Scan Count'
+  %     'timeJ'         'Julian Days'
+  %     'prDM'          'Pressure, Digiquartz [db]'
+  %     'depSM'         'Depth [salt water, m]'
+  %     't090C'         'Temperature [ITS-90, deg C]'
+  %     't190C'         'Temperature, 2 [ITS-90, deg C]'
+  %     'c0S/m'         'Conductivity [S/m]'
+  %     'c1S/m'         'Conductivity, 2 [S/m]'
+  %     'sbeox0V'       'Oxygen raw, SBE 43 [V]'
+  %     'sbeox1V'       'Oxygen raw, SBE 43, 2 [V]'
+  %     'sbox1dV/dT'    'Oxygen, SBE 43, 2 [dov/dt]'
+  %     'sbox0dV/dT'    'Oxygen, SBE 43 [dov/dt]'
+  %     'latitude'      'Latitude [deg]'
+  %     'longitude'     'Longitude [deg]'
+  %     'timeS'         'Time, Elapsed [seconds]'
+  %     'flECO-AFL'     'Fluorescence, WET Labs ECO-AFL/FL [mg/m^3]'
+  %     'CStarTr0'      'Beam Transmission, WET Labs C-Star [%]'
+  %     'sbox0Mm/Kg'    'Oxygen, SBE 43 [umol/kg], WS = 2'
+  %     'sbox1Mm/Kg'    'Oxygen, SBE 43, 2 [umol/kg], WS = 2'
+  %     'sal00'         'Salinity, Practical [PSU]'
+  %     'sal11'         'Salinity, Practical, 2 [PSU]'
+  %     'sigma-é00'     'Density [sigma-theta, kg/m^3]'
+  %     'sigma-é11'     'Density, 2 [sigma-theta, kg/m^3]'
+  %     'svCM'          'Sound Velocity [Chen-Millero, m/s]'
+  %     'svCM1'         'Sound Velocity, 2 [Chen-Millero, m/s]'
+  %     'nbin'          'number of scans per bin'
+  %     'flag'          'flag'
+  %
+  % sensors:
+  % ans =
+  %
+  %   10×2 cell array
+  %
+  %     'Frequency 0, Temperature'                         '6083'
+  %     'Frequency 1, Conductivity'                        '4509'
+  %     'Frequency 2, Pressure, Digiquartz with TC'        '1263'
+  %     'Frequency 3, Temperature, 2'                      '6086'
+  %     'Frequency 4, Conductivity, 2'                     '4510'
+  %     'A/D voltage 0, Oxygen, SBE 43'                    '3261'
+  %     'A/D voltage 1, Oxygen, SBE 43, 2'                 '3265'
+  %     'A/D voltage 2, Transmissometer, WET Labs C-…'    'CTS1210DR'
+  %     'A/D voltage 3, Fluorometer, WET Labs ECO-AF…'    'FLRTD-1367'
+  %     'A/D voltage 4, Altimeter'                         '61768'
+   %
+  % data:
+  % ans =
+  %
+  %   27×2 cell array
+  %
+  %     'scan'          [2022×1 double]
+  %     'timeJ'         [2022×1 double]
+  %     'prDM'          [2022×1 double]
+  %     'depSM'         [2022×1 double]
+  %     't090C'         [2022×1 double]
+  %     't190C'         [2022×1 double]
+  %     'c0S/m'         [2022×1 double]
+  %     'c1S/m'         [2022×1 double]
+  %     'sbeox0V'       [2022×1 double]
+  %     'sbeox1V'       [2022×1 double]
+  %     'sbox1dV/dT'    [2022×1 double]
+  %     'sbox0dV/dT'    [2022×1 double]
+  %     'latitude'      [2022×1 double]
+  %     'longitude'     [2022×1 double]
+  %     'timeS'         [2022×1 double]
+  %     'flECO-AFL'     [2022×1 double]
+  %     'CStarTr0'      [2022×1 double]
+  %     'sbox0Mm/Kg'    [2022×1 double]
+  %     'sbox1Mm/Kg'    [2022×1 double]
+  %     'sal00'         [2022×1 double]
+  %     'sal11'         [2022×1 double]
+  %     'sigma-é00'     [2022×1 double]
+  %     'sigma-é11'     [2022×1 double]
+  %     'svCM'          [2022×1 double]
+  %     'svCM1'         [2022×1 double]
+  %     'nbin'          [2022×1 double]
+  %     'flag'          [2022×1 double]
+  %   
+  % r.latitude
+  %    11.4650
+  % r.date
+  %    7.3640e+05
+  % keys(r.data)
+  % values(r.data)
+  % temp = r.data('t190C')
   % temp(1:5)
   %    24.7254
   %    24.7250
@@ -49,22 +118,23 @@ classdef readCnv < hashtable
   
   properties   (Access = private)
     fileNames
-    VarList     = hashtable;
+    varList     = hashtable;
   end
   
   properties (SetAccess = public)
-    CTD_Type
-    Seasave_Version
-    Calibration
-    Profile
-    Datenum           % internal Matlab date representation
-    Julian
-    Latnum
-    Longnum
-    Plateforme
-    Cruise
-    VarNames    = hashtable
-    Sensors     = hashtable
+    ctdType
+    seasaveVersion
+    calibration
+    profile
+    date           % internal Matlab date representation
+    julian
+    latitude
+    longitude
+    plateforme
+    cruise
+    varNames    = hashtable
+    sensors     = hashtable
+    data        = hashtable
   end
   
   methods % public methods
@@ -117,7 +187,7 @@ classdef readCnv < hashtable
         match = regexp( tline,...
           '^*\s*Sea-Bird\s*(.+)\s*Data File:', 'tokens');
         if ~isempty(match)
-          self.CTD_Type = match{1}{1};
+          self.ctdType = match{1}{1};
           continue
         end
         
@@ -129,7 +199,7 @@ classdef readCnv < hashtable
         s = regexp(tline,...
           '^*\s*Software Version Seasave.*(?<VERSION>\d+\.\d+)', 'names');
         if ~isempty(s)
-          self.Seasave_Version = s.VERSION;
+          self.seasaveVersion = s.VERSION;
           continue
         end
         
@@ -145,7 +215,7 @@ classdef readCnv < hashtable
           match = regexp( tline,...
             '^#\s+<SerialNumber>(.*?)</SerialNumber>', 'tokens');
           if ~isempty(match)
-            self.Sensors(param) = match{1}{1};
+            self.sensors(param) = match{1}{1};
             continue
           end
         end
@@ -165,8 +235,8 @@ classdef readCnv < hashtable
           
           % convert date and time of launch to internal matlab datenum
           % ----------------------------------------------------------
-          self.Datenum = datenum([year month day hour min sec],'yyyymmmddHHMMSS');
-          self.Julian = datenumToJulian(self, self.Datenum);
+          self.date   = datenum([year month day hour min sec],'yyyymmmddHHMMSS');
+          self.julian = datenumToJulian(self, self.date);
           continue
         end
         
@@ -180,7 +250,7 @@ classdef readCnv < hashtable
           deg  = str2double(match{1}{1});
           min  = str2double(match{1}{2});
           hemi = match{1}{3};
-          self.Latnum = degMinToDec(self, deg, min, hemi);
+          self.latitude = degMinToDec(self, deg, min, hemi);
           continue
         end
         
@@ -192,7 +262,7 @@ classdef readCnv < hashtable
           deg  = str2double(match{1}{1});
           min  = str2double(match{1}{2});
           hemi  = match{1}{3};
-          self.Longnum = degMinToDec(self, deg, min, hemi);
+          self.longitude = degMinToDec(self, deg, min, hemi);
           continue
         end
         
@@ -202,7 +272,7 @@ classdef readCnv < hashtable
         match = regexp( tline,...
           '^**\s*Ship\s*:\s*(\w.+)$', 'tokens');
         if ~isempty(match)
-          self.Plateforme = match{1}{1};
+          self.plateforme = match{1}{1};
           continue
         end
         
@@ -212,7 +282,7 @@ classdef readCnv < hashtable
         match = regexp( tline,...
           '^**\s*Cruise\s*:\s*(\w.+)$', 'tokens');
         if ~isempty(match)
-          self.Cruise = match{1}{1};
+          self.cruise = match{1}{1};
           continue
         end
         
@@ -222,7 +292,7 @@ classdef readCnv < hashtable
         match = regexp( tline,...
           '^**\s*[Ss]tation\s*:\s*(\d+)', 'tokens');
         if ~isempty(match)
-          self.Profile = match{1}{1};
+          self.profile = match{1}{1};
           continue
         end
         
@@ -234,15 +304,15 @@ classdef readCnv < hashtable
         match = regexp( tline,...
           '^#\s*name\s*(\d+)\s*=\s*(.+?):\s*(.+?)$', 'tokens');
         if ~isempty(match)
-          self.VarList(match{1}{1}) = match{1}{2};
-          self.VarNames(match{1}{2}) = match{1}{3};
+          self.varList(match{1}{1}) = match{1}{2};
+          self.varNames(match{1}{2}) = match{1}{3};
           continue
         end
       end % end of header
       
       % get all keys in hashtable containing the list of columns name
       % -------------------------------------------------------------
-      theKeys = keys(self.VarList);
+      theKeys = keys(self.varList);
       
       % number of keys corresponding to column number to read
       % -----------------------------------------------------
@@ -250,14 +320,15 @@ classdef readCnv < hashtable
       
       % read the end-of-file
       % --------------------
-      data = fscanf(fid, '%g', [columns Inf]);
-      data = data'; % transpose matrix
+      theData = fscanf(fid, '%g', [columns Inf]);
+      theData = theData'; % transpose matrix
       
       % set oceano Data property with hashtable from matrix data
       % --------------------------------------------------------
       for key = theKeys
         ind = str2double(char(key));
-        put(self,self.VarList(char(key)), data(:,ind+1));
+        self.data(self.varList(char(key))) = theData(:,ind+1);
+        %put(self,self.varList(char(key)), data(:,ind+1));
       end
       
       fclose(fid);
@@ -269,30 +340,36 @@ classdef readCnv < hashtable
       
       % display aditionnals sbe911 properties
       % -------------------------------------
-      fprintf('\tCruise:          %s\n', self.Cruise);
-      fprintf('\tPlateforme name: %s\n', self.Plateforme);
-      fprintf('\tProfile:         %s\n', self.Profile);
-      fprintf('\tDate (datenum):  %f\n', self.Datenum);
-      fprintf('\tDate (julian):   %f\n', self.Julian);
-      fprintf('\tLatitude:        %f\n', self.Latnum);
-      fprintf('\tLongitude:       %f\n', self.Longnum);
-      fprintf('\tCTD Type:        %s\n', self.CTD_Type);
-      fprintf('\tSeasave version: %s\n', self.Seasave_Version);
-      disp@hashtable(self.VarNames);
-      disp@hashtable(self.Sensors);
+      fprintf('\tcruise:          %s\n', self.cruise);
+      fprintf('\tplateforme:      %s\n', self.plateforme);
+      fprintf('\tprofile:         %s\n', self.profile);
+      fprintf('\tdate:             %f\n', self.date);
+      fprintf('\tjulian:          %f\n', self.julian);
+      fprintf('\tlatitude:        %f\n', self.latitude);
+      fprintf('\tlongitude:       %f\n', self.longitude);
+      fprintf('\tctdType:         %s\n', self.ctdType);
+      fprintf('\tseasaveVersion:  %s\n', self.seasaveVersion);
+      %disp@hashtable(self.varNames);
+      fprintf('\nvarNames:');
+      self.varNames
+      %disp@hashtable(self.sensors);
+      fprintf('\nsensors:');
+      self.sensors
       
       % call superclass disp method
       % ---------------------------
-      disp@hashtable(self);     
+      %disp@hashtable(self.data);
+      fprintf('\ndata:');
+      self.data
     end
-       
+    
     % Converts a GPS latitude or longitude degrees minutes string to a decimal
     % degrees latitude or longitude
     % ------------------------------------------------------------------------
     function dec = degMinToDec(~, deg, min, EWNS)
-       
+      
       % convert to decimal
-       dec = deg + min/60;
+      dec = deg + min/60;
       
       % add negative sign to decimal degrees if south of equator or west
       switch EWNS
@@ -304,7 +381,7 @@ classdef readCnv < hashtable
           dec = dec * -1;
         otherwise
           % do nothing
-      end     
+      end
     end % end of degMinToDec
     
     % converts Matlab datenum to its equivalent Julian day with days since
@@ -312,7 +389,7 @@ classdef readCnv < hashtable
     % --------------------------------------------------------------------
     function julian = datenumToJulian(~, dateNum)
       julian = dateNum - datenum(1950, 1, 1);
-    end 
+    end
     
     
   end % end of public methods
