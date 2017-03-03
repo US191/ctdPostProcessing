@@ -5,10 +5,9 @@ readCnv.m: read seabird cnv file(s) using containers.Map object
  
     Examples:
  
->>  r = readCnv  use uigetfile to select one or more files
->>  r = readCnv('C:\git\ctdPostProcessing\examples\fr26\data\cnv\dfr26001.cnv')
- 
->>  r = 
+  r = readCnv  use uigetfile to select one or more files
+  r = readCnv('C:\git\ctdPostProcessing\examples\fr26\data\cnv\dfr26001.cnv')
+  r = 
 
 	cruise:          PIRATA-FR26
 	plateforme:      THALASSA
@@ -93,10 +92,10 @@ sensors:  10×2 cell array
     'nbin'          'nbin'      
     'flag'          'flag'      
  
->> keys(r.varNames)
->> values(r.varNames)
->> temp = r('t190C');
->> temp(1:5)
+ keys(r.varNames)
+ values(r.varNames)
+ temp = r('t190C');
+ temp(1:5)
 
 ans =
 
