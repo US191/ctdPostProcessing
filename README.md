@@ -1,12 +1,16 @@
 # ctdPostProcessing
-Matlab code for :
+Matlab code for:
+
 process.m: processing raw Seabird CTD .hex cast to .cnv file
+
 readCnv.m: read seabird cnv file(s) using containers.Map object
  
     Examples:
  
   r = readCnv  use uigetfile to select one or more files
+  
   r = readCnv('C:\git\ctdPostProcessing\examples\fr26\data\cnv\dfr26001.cnv')
+  
   r = 
 
 	cruise:          PIRATA-FR26
@@ -93,15 +97,22 @@ sensors:  10×2 cell array
     'flag'          'flag'      
  
  keys(r.varNames)
+ 
  values(r.varNames)
+ 
  temp = r('t190C');
+ 
  temp(1:5)
 
 ans =
 
    24.7249
+   
    24.7268
+   
    24.7250
+   
    24.7252
+   
    24.7256
  
