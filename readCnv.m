@@ -138,14 +138,14 @@ classdef readCnv < handle
   end
   
   methods % public methods
-    function self = readCnv(fileNames, varargin)
+    function self = readCnv(fileNames)
       
       % pre initialization - select filename
       if nargin < 1 || isempty(fileNames)
         [fileNames, pathName] = uigetfile({'*.cnv','Seabird cnv (*.cnv)'},...
           'Select files','MultiSelect','on');
-        if isempty(fileNames)
-          error(message('MATLAB:reportReader:Empty fileName'));
+        if fileNames == 0
+          error('readCnv: empty fileName');
         else
           fileNames = fullfile(pathName, fileNames);
         end
