@@ -1,4 +1,4 @@
-classdef readCnv < handle
+classdef readCnv < containers.Map & handle
   %readCnv construct object and read seabird cnv file(s)
   %
   %   Examples:
@@ -19,8 +19,7 @@ classdef readCnv < handle
   % 	ctdType:         SBE 9
   % 	seasaveVersion:  3.2
   %
-  % varNames:
-  %   27×2 cell array
+  % varNames: 27×2 cell array
   %
   %     'scan'          'Scan Count'
   %     'timeJ'         'Julian Days'
@@ -50,10 +49,7 @@ classdef readCnv < handle
   %     'nbin'          'number of scans per bin'
   %     'flag'          'flag'
   %
-  % sensors:
-  % ans =
-  %
-  %   10×2 cell array
+  % sensors: 10×2 cell array
   %
   %     'Frequency 0, Temperature'                         '6083'
   %     'Frequency 1, Conductivity'                        '4509'
@@ -65,11 +61,8 @@ classdef readCnv < handle
   %     'A/D voltage 2, Transmissometer, WET Labs C-…'    'CTS1210DR'
   %     'A/D voltage 3, Fluorometer, WET Labs ECO-AF…'    'FLRTD-1367'
   %     'A/D voltage 4, Altimeter'                         '61768'
-   %
-  % data:
-  % ans =
   %
-  %   27×2 cell array
+  % 27×2 cell array
   %
   %     'scan'          [2022×1 double]
   %     'timeJ'         [2022×1 double]
@@ -98,14 +91,14 @@ classdef readCnv < handle
   %     'svCM1'         [2022×1 double]
   %     'nbin'          [2022×1 double]
   %     'flag'          [2022×1 double]
-  %   
+  %
   % r.latitude
   %    11.4650
   % r.date
   %    7.3640e+05
-  % keys(r.data)
-  % values(r.data)
-  % temp = r.data('t190C')
+  % keys(r)
+  % values(r)
+  % temp = r('t190C')
   % temp(1:5)
   %    24.7254
   %    24.7250
@@ -119,6 +112,10 @@ classdef readCnv < handle
   properties   (Access = private)
     fileNames
     varList     =  containers.Map;
+    % the iteration order over containers.Maps is ordered.
+    % these properties are used to store keys
+    varNamesList = {}
+    sensorsList  = {}
   end
   
   properties (SetAccess = public)
@@ -134,10 +131,12 @@ classdef readCnv < handle
     cruise
     varNames    =  containers.Map
     sensors     =  containers.Map
-    data        =  containers.Map
   end
   
   methods % public methods
+    
+    % constructor
+    % --------------------------------
     function self = readCnv(fileNames)
       
       % pre initialization - select filename
@@ -162,8 +161,6 @@ classdef readCnv < handle
         file = char(f);
         read(self, file);
       end
-      
-      
     end % end of constructor
     
     % read files and fill containers.Map
@@ -171,7 +168,10 @@ classdef readCnv < handle
     function  read(self,file)
       
       fprintf(1, 'read file: %s\n', file);
-      fid = fopen(file);
+      [fid, errmsg] = fopen(file);
+      if fid == -1
+        error('readCnv:read', 'error: %s', errmsg);
+      end
       
       % read the header
       while ~feof(fid)
@@ -180,10 +180,10 @@ classdef readCnv < handle
         if ~isempty(strfind(tline,'*END'))  % end of header
           break;
         end
+        
         % extract CTD type
         % ex: * Sea-Bird SBE 9 Data File:
         % ex: * Sea-Bird SBE19plus Data File:
-        % -----------------------------------
         match = regexp( tline,...
           '^*\s*Sea-Bird\s*(.+)\s*Data File:', 'tokens');
         if ~isempty(match)
@@ -195,7 +195,6 @@ classdef readCnv < handle
         % return structure array containing the name and text of each named token
         % captured by regexp.
         % ex: * Software Version Seasave V 7.16
-        % -------------------------------------
         s = regexp(tline,...
           '^*\s*Software Version Seasave.*(?<VERSION>\d+\.\d+)', 'names');
         if ~isempty(s)
@@ -205,7 +204,6 @@ classdef readCnv < handle
         
         % extract sensors name and serial number to map
         % ex: * Temperature SN = 2441
-        % ----------------------------------------
         match = regexp( tline,...
           '^#\s+<!--\s*(.*?)\s*-->', 'tokens');
         if ~isempty(match)
@@ -215,6 +213,7 @@ classdef readCnv < handle
           match = regexp( tline,...
             '^#\s+<SerialNumber>(.*?)</SerialNumber>', 'tokens');
           if ~isempty(match)
+            self.sensorsList = [self.sensorsList, param];
             self.sensors(param) = match{1}{1};
             continue
           end
@@ -222,7 +221,6 @@ classdef readCnv < handle
         
         % extract date of launch
         % ex: * System UpLoad Time = Oct 03 2008 16:45:05
-        % -----------------------------------------------
         match = regexp( tline,...
           '^*\s*System UpLoad Time\s*=\s*(\w+)\s*(\d*)\s*(\d*)\s*(\d{2}):(\d{2}):(\d{2})', 'tokens');
         if ~isempty(match)
@@ -234,7 +232,6 @@ classdef readCnv < handle
           sec   = match{1}{6};
           
           % convert date and time of launch to internal matlab datenum
-          % ----------------------------------------------------------
           self.date   = datenum([year month day hour min sec],'yyyymmmddHHMMSS');
           self.julian = datenumToJulian(self, self.date);
           continue
@@ -243,7 +240,6 @@ classdef readCnv < handle
         % extract NMEA Latitude
         % a revoir l'utilisation de DegMin_2_Dec et dd2dm dans oceano
         % a mettre sous forme de package us191.datagui.util
-        % ---------------------------------------------------------------
         match = regexp( tline,...
           '^*\s*NMEA Latitude\s*=\s*(\d+)\s+(\d+\.\d+)\s*(\w{1})', 'tokens');
         if ~isempty(match)
@@ -255,7 +251,6 @@ classdef readCnv < handle
         end
         
         % extract NMEA Longitude
-        % ----------------------
         match = regexp( tline,...
           '^*\s*NMEA Longitude\s*=\s*(\d+)\s+(\d+\.\d+)\s*(\w{1})', 'tokens');
         if ~isempty(match)
@@ -268,7 +263,6 @@ classdef readCnv < handle
         
         % extract Plateforme name (eg ship or navire)
         % ex: ** Ship: BIC Olaya
-        % ----------------------
         match = regexp( tline,...
           '^**\s*Ship\s*:\s*(\w.+)$', 'tokens');
         if ~isempty(match)
@@ -278,7 +272,6 @@ classdef readCnv < handle
         
         % extract cruise name
         % ex: ** Cruise:   PIRATA-FR18
-        % ----------------------------
         match = regexp( tline,...
           '^**\s*Cruise\s*:\s*(\w.+)$', 'tokens');
         if ~isempty(match)
@@ -288,7 +281,6 @@ classdef readCnv < handle
         
         % extract profile number
         % ex: ** Station: 001
-        % ----------------------
         match = regexp( tline,...
           '^**\s*[Ss]tation\s*:\s*(\d+)', 'tokens');
         if ~isempty(match)
@@ -300,10 +292,10 @@ classdef readCnv < handle
         % ex: # name 0 = prDM: Pressure, Digiquartz [db]
         %     # name 1 = t090C: Temperature [ITS-90, deg C]
         %     # ...
-        % -------------------------------------------------
         match = regexp( tline,...
           '^#\s*name\s*(\d+)\s*=\s*(.+?):\s*(.+?)$', 'tokens');
         if ~isempty(match)
+          self.varNamesList = [self.varNamesList, match{1}{2}];
           self.varList(match{1}{1}) = match{1}{2};
           self.varNames(match{1}{2}) = match{1}{3};
           continue
@@ -311,25 +303,26 @@ classdef readCnv < handle
       end % end of header
       
       % get all keys in  containers.Map containing the list of columns name
-      % -------------------------------------------------------------
       theKeys = keys(self.varList);
       
       % number of keys corresponding to column number to read
-      % -----------------------------------------------------
       columns = length(theKeys);
       
       % read the end-of-file
-      % --------------------
       theData = fscanf(fid, '%g', [columns Inf]);
       theData = theData'; % transpose matrix
       
-      % set oceano Data property with  containers.Map from matrix data
-      % --------------------------------------------------------
+      % set inherited containers.Map from matrix theData
+      % see http://fr.mathworks.com/matlabcentral/newsreader/view_thread/250895
       for key = theKeys
         ind = str2double(char(key));
-        self.data(self.varList(char(key))) = theData(:,ind+1);
+        theKey = self.varList(char(key));
+        % see subsassign, doesn't works,  self(theKey) call constructeur
+        % with values as filename
+        % self(theKey) = theData(:,ind+1);
+        S = substruct('()', theKey);
+        self = subsasgn(self, S, theData(:,ind+1));
       end
-      
       fclose(fid);
     end % end of read
     
@@ -338,7 +331,6 @@ classdef readCnv < handle
     function disp(self)
       
       % display aditionnals sbe911 properties
-      % -------------------------------------
       fprintf('\tcruise:          %s\n', self.cruise);
       fprintf('\tplateforme:      %s\n', self.plateforme);
       fprintf('\tprofile:         %s\n', self.profile);
@@ -349,11 +341,10 @@ classdef readCnv < handle
       fprintf('\tctdType:         %s\n', self.ctdType);
       fprintf('\tseasaveVersion:  %s\n', self.seasaveVersion);
       fprintf('\nvarNames:');
-      display(elements(self,self.varNames));
-      fprintf('\nsensors:');
-      display(elements(self,self.sensors));
-      fprintf('\ndata:');
-      display(elements(self,self.data));
+      display(self.elements(self.varNames, self.varNamesList));
+      fprintf('sensors:');
+      display(self.elements(self.sensors, self.sensorsList));
+      display(self.elements(self, self.varNamesList));
     end
     
     % Converts a GPS latitude or longitude degrees minutes string to a decimal
@@ -384,18 +375,34 @@ classdef readCnv < handle
       julian = dateNum - datenum(1950, 1, 1);
     end
     
-       % get elements from hashtable in cell array
-    % ------------------------------------
-    function theValue = elements(self,map)
+  end % end of public methods
+  
+  methods(Static)
+    
+    % get elements from hashtable in cell array
+    % -----------------------------------------
+    function theValue = elements(map, list)
       if ~isempty(keys(map)) && ~isempty(values(map))
-        theValue(:,1) = keys(map);
-        theValue(:,2) = values(map);
+        theValue = cell(length(list),2);
+        if isempty(list)
+          theValue(:,1) = keys(map);
+          theValue(:,2) = values(map);
+        else
+          for i = 1 : length(list)
+            theValue(i,1) = {list{i}};
+            if strcmp(class(map), mfilename)
+              theValue(i,2) = list(i);
+            else
+              theValue(i,2) = {map(list{i})};
+            end
+          end
+        end
       else
         theValue = {};
-      end     
+      end
     end % end of elements
-    
-  end % end of public methods
+     
+  end % end of static methods
   
 end % end of class readCnv
 
