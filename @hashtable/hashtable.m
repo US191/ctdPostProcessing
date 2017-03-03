@@ -1,23 +1,23 @@
-%% us191.hashtable class
+%% hashtable class
 %
 % This class implement a hashtable and is part of us191 package (namespace)
-% h = us191.hashtable(keys, values)
+% h = hashtable(keys, values)
 %
-% us191.hashtable use same syntax than Matlab containers.Map object with
+% hashtable use same syntax than Matlab containers.Map object with
 % some useful get and put methods, and give logical indexing.
-% Instead of MATLAB containers.Map, us191.hashtable lists keys in the order
+% Instead of MATLAB containers.Map, hashtable lists keys in the order
 % they are enter by default.
 %
-% us191.hashtable is a part of package us191, use fully qualified
-% package name like us191.hashtable or use 'import us191' directive first
+% hashtable is a part of package us191, use fully qualified
+% package name like hashtable or use 'import us191' directive first
 % in your function before use this class.
 %
-% us191.hashtable is a handle class
+% hashtable is a handle class
 %
 %% Examples:
 %
-% h = us191.hashtable
-% import us191.*;
+% h = hashtable
+% import *;
 % h = hashtable
 % put(h, 'a', 1)
 % put(h, {'b','c'},{2,3})
@@ -38,10 +38,10 @@
 % s = get(h, 'c')
 % s = h.c
 % v = h.c.field2
-% h = us191.hashtable('a', [1:2:20;1:3:30])
+% h = hashtable('a', [1:2:20;1:3:30])
 % v = h.a(1:3,:)
 %
-% class us191.hashtable <a href="matlab:methods('us191.hashtable')">methods</a>
+% class hashtable <a href="matlab:methods('hashtable')">methods</a>
 %
 % $Id$
 
@@ -100,7 +100,7 @@ classdef hashtable < handle
             
             % copy constructor
             % ----------------
-            if nargin == 1 && isa(varargin{1},'us191.hashtable')
+            if nargin == 1 && isa(varargin{1},'hashtable')
                 self = varargin{1};
                 return;
                 
