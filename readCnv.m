@@ -118,7 +118,7 @@ classdef readCnv < handle
   
   properties   (Access = private)
     fileNames
-    varList     = hashtable;
+    varList     =  containers.Map;
   end
   
   properties (SetAccess = public)
@@ -132,9 +132,9 @@ classdef readCnv < handle
     longitude
     plateforme
     cruise
-    varNames    = hashtable
-    sensors     = hashtable
-    data        = hashtable
+    varNames    =  containers.Map
+    sensors     =  containers.Map
+    data        =  containers.Map
   end
   
   methods % public methods
@@ -310,7 +310,7 @@ classdef readCnv < handle
         end
       end % end of header
       
-      % get all keys in hashtable containing the list of columns name
+      % get all keys in  containers.Map containing the list of columns name
       % -------------------------------------------------------------
       theKeys = keys(self.varList);
       
@@ -323,12 +323,11 @@ classdef readCnv < handle
       theData = fscanf(fid, '%g', [columns Inf]);
       theData = theData'; % transpose matrix
       
-      % set oceano Data property with hashtable from matrix data
+      % set oceano Data property with  containers.Map from matrix data
       % --------------------------------------------------------
       for key = theKeys
         ind = str2double(char(key));
         self.data(self.varList(char(key))) = theData(:,ind+1);
-        %put(self,self.varList(char(key)), data(:,ind+1));
       end
       
       fclose(fid);
@@ -343,24 +342,18 @@ classdef readCnv < handle
       fprintf('\tcruise:          %s\n', self.cruise);
       fprintf('\tplateforme:      %s\n', self.plateforme);
       fprintf('\tprofile:         %s\n', self.profile);
-      fprintf('\tdate:             %f\n', self.date);
+      fprintf('\tdate:            %f\n', self.date);
       fprintf('\tjulian:          %f\n', self.julian);
       fprintf('\tlatitude:        %f\n', self.latitude);
       fprintf('\tlongitude:       %f\n', self.longitude);
       fprintf('\tctdType:         %s\n', self.ctdType);
       fprintf('\tseasaveVersion:  %s\n', self.seasaveVersion);
-      %disp@hashtable(self.varNames);
       fprintf('\nvarNames:');
-      self.varNames
-      %disp@hashtable(self.sensors);
+      display(elements(self,self.varNames));
       fprintf('\nsensors:');
-      self.sensors
-      
-      % call superclass disp method
-      % ---------------------------
-      %disp@hashtable(self.data);
+      display(elements(self,self.sensors));
       fprintf('\ndata:');
-      self.data
+      display(elements(self,self.data));
     end
     
     % Converts a GPS latitude or longitude degrees minutes string to a decimal
@@ -391,6 +384,16 @@ classdef readCnv < handle
       julian = dateNum - datenum(1950, 1, 1);
     end
     
+       % get elements from hashtable in cell array
+    % ------------------------------------
+    function theValue = elements(self,map)
+      if ~isempty(keys(map)) && ~isempty(values(map))
+        theValue(:,1) = keys(map);
+        theValue(:,2) = values(map);
+      else
+        theValue = {};
+      end     
+    end % end of elements
     
   end % end of public methods
   
