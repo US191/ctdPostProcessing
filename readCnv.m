@@ -106,6 +106,21 @@ classdef readCnv < containers.Map & handle
   %    24.7244
   %    24.7246
   %    ...
+  % keys(r.varNames)
+  % r.varNames.t090C
+  %    Temperature [ITS-90, deg C]
+  % r.varNames.('t090C')
+  % r.varNames.sbeox1dOV/dT
+  %    The specified key is not present in this container.
+  %    Matlab evaluate r.varNames.sbeox1dOV first before divide by dT
+  %    Use the following notation instead:
+  % r.varNames('sbeox1dOV/dT')
+  %    Temperature [ITS-90, deg C]
+  % 
+  % keys(r.sensors)
+  % values(r.sensors)
+  % r.sensors.('A/D voltage 0, Oxygen, SBE 43')
+  %    3261
   %
   % J. Grelet IRD US191 IMAGO - 2017
   
@@ -116,6 +131,7 @@ classdef readCnv < containers.Map & handle
     % these properties are used to store keys
     varNamesList = {}
     sensorsList  = {}
+    theSize
   end
   
   properties (SetAccess = public)
@@ -149,6 +165,8 @@ classdef readCnv < containers.Map & handle
           fileNames = fullfile(pathName, fileNames);
         end
       end
+      
+      %self = self@containers.Map;
       
       % post initialization
       if ischar(fileNames)
@@ -311,6 +329,7 @@ classdef readCnv < containers.Map & handle
       % read the end-of-file
       theData = fscanf(fid, '%g', [columns Inf]);
       theData = theData'; % transpose matrix
+      self.theSize = size(theData,1);
       
       % set inherited containers.Map from matrix theData
       % see http://fr.mathworks.com/matlabcentral/newsreader/view_thread/250895
@@ -344,7 +363,11 @@ classdef readCnv < containers.Map & handle
       display(self.elements(self.varNames, self.varNamesList));
       fprintf('sensors:');
       display(self.elements(self.sensors, self.sensorsList));
-      display(self.elements(self, self.varNamesList));
+      %display(self.elements(self, self.varNamesList));
+      for v = self.varNamesList
+        str = sprintf('''%s''', char(v));
+        fprintf(1, '\t%-15s\t\t\t[%d x 1]\n', str, self.theSize);
+      end
     end
     
     % Converts a GPS latitude or longitude degrees minutes string to a decimal
@@ -375,33 +398,80 @@ classdef readCnv < containers.Map & handle
       julian = dateNum - datenum(1950, 1, 1);
     end
     
+    % overload the subsref functions
+    % ------------------------------
+    function sref = subsref(self,s)
+      switch s(1).type
+        case '.'
+          % implement obj.PropertyName
+          if length(s) == 1
+            switch s(1).subs
+              case { 'ctdType','seasaveVersion','calibration',...
+                  'profile','date','julian','latitude','longitude',...
+                  'plateforme','cruise'}
+                sref = self.(s(1).subs);
+              case { 'sensors', 'varNames'}
+                sref = self.(s(1).subs);
+              otherwise
+                t.type = '()';
+                t.subs = s(1).subs;
+                sref = subsref@containers.Map(self,t);
+            end
+          elseif length(s) == 2 && strcmp(s(2).type,'()')
+            % implement obj.PropertyName(indices)
+            switch s(1).subs
+              case { 'sensors','varNames'}
+                val = self.(s(1).subs);
+                sref = val(char(s(2).subs));
+              otherwise
+                t.type = '()';
+                t.subs = s(1).subs;
+                val = subsref@containers.Map(self,t);
+                sref = val(s(2).subs{1});
+            end
+          elseif length(s) == 2 && strcmp(s(2).type,'.')
+            switch s(1).subs
+              case { 'sensors','varNames'}
+                val = self.(s(1).subs);
+                t.type = '()';
+                t.subs = s(2).subs;
+                sref = subsref@containers.Map(val,t);
+              otherwise
+                error('Not a valid indexing expression')
+            end
+          end
+        case '()'
+          sref = subsref@containers.Map(self,s);
+        case '{}'
+          error('Not a supported indexing expression')
+      end
+    end % end of subsref
+    
   end % end of public methods
   
   methods(Static)
     
-    % get elements from hashtable in cell array
+    % get elements from hashtable in cell array,
+    % list contain all the key with input order
     % -----------------------------------------
-    function theValue = elements(map, list)
-      if ~isempty(keys(map)) && ~isempty(values(map))
-        theValue = cell(length(list),2);
-        if isempty(list)
-          theValue(:,1) = keys(map);
-          theValue(:,2) = values(map);
+    function theValue = elements(theMap, theList)
+      if ~isempty(keys(theMap)) && ~isempty(values(theMap))
+        % initialize theValue
+        theValue = cell(length(theList),2);
+        if isempty(theList)
+          theValue(:,1) = keys(theMap);
+          theValue(:,2) = values(theMap);
         else
-          for i = 1 : length(list)
-            theValue(i,1) = {list{i}};
-            if strcmp(class(map), mfilename)
-              theValue(i,2) = list(i);
-            else
-              theValue(i,2) = {map(list{i})};
-            end
+          for i = 1 : length(theList)
+            theValue(i,1) = {theList{i}};
+            theValue(i,2) = {theMap(theList{i})};
           end
         end
       else
         theValue = {};
       end
     end % end of elements
-     
+    
   end % end of static methods
   
 end % end of class readCnv
