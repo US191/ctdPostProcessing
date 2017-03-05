@@ -159,20 +159,17 @@ classdef readCnv < containers.Map & handle
       if nargin < 1 || isempty(fileNames)
         [fileNames, pathName] = uigetfile({'*.cnv','Seabird cnv (*.cnv)'},...
           'Select files','MultiSelect','on');
-        if fileNames == 0
-          error('readCnv: empty fileName');
-        else
-          fileNames = fullfile(pathName, fileNames);
-        end
+       if isnumeric(fileNames)
+         if fileNames == 0
+         error('readCnv: empty fileName');
+         end
+       elseif ischar(fileNames)
+          fileNames = {fileNames};
+       end
       end
-      
-      %self = self@containers.Map;
-      
+     
       % post initialization
-      if ischar(fileNames)
-        fileNames = {fileNames};
-      end
-      self.fileNames = fileNames;
+      self.fileNames = fullfile(pathName, fileNames);
       
       % read and extract data from file(s)
       for f = self.fileNames
@@ -386,8 +383,10 @@ classdef readCnv < containers.Map & handle
         case 'W'
           % west of Greenwich meridian is negative, add -ve sign
           dec = dec * -1;
-        otherwise
+        case {'N','E'}
           % do nothing
+        otherwise
+          error('readCnv:degMinToDec', 'error: bad hemisphere %s', EWNS);
       end
     end % end of degMinToDec
     
@@ -452,8 +451,8 @@ classdef readCnv < containers.Map & handle
   methods(Static)
     
     % get elements from hashtable in cell array,
-    % list contain all the key with input order
-    % -----------------------------------------
+    % theList contain all keys with the input order
+    % ----------------------------------------------
     function theValue = elements(theMap, theList)
       if ~isempty(keys(theMap)) && ~isempty(values(theMap))
         % initialize theValue
