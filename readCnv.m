@@ -1,5 +1,5 @@
 classdef readCnv < containers.Map & handle
-  %readCnv construct object and read seabird cnv file(s)
+  %readCnv construct object and read seabird cnv file
   %
   %   Examples:
   %
@@ -116,7 +116,7 @@ classdef readCnv < containers.Map & handle
   %    Use the following notation instead:
   % r.varNames('sbeox1dOV/dT')
   %    Temperature [ITS-90, deg C]
-  % 
+  %
   % keys(r.sensors)
   % values(r.sensors)
   % r.sensors.('A/D voltage 0, Oxygen, SBE 43')
@@ -125,7 +125,7 @@ classdef readCnv < containers.Map & handle
   % J. Grelet IRD US191 IMAGO - 2017
   
   properties   (Access = private)
-    fileNames
+    fileName
     varList     =  containers.Map;
     % the iteration order over containers.Maps is ordered.
     % these properties are used to store keys
@@ -153,37 +153,32 @@ classdef readCnv < containers.Map & handle
     
     % constructor
     % --------------------------------
-    function self = readCnv(fileNames)
+    function self = readCnv(fileName)
       
       % pre initialization - select filename
-      if nargin < 1 || isempty(fileNames)
-        [fileNames, pathName] = uigetfile({'*.cnv','Seabird cnv (*.cnv)'},...
-          'Select files','MultiSelect','on');
-       if isnumeric(fileNames)
-         if fileNames == 0
-         error('readCnv: empty fileName');
-         end
-       elseif ischar(fileNames)
-          fileNames = {fileNames};
-       end
+      if nargin < 1 || isempty(fileName)
+        [fileName, pathName] = uigetfile({'*.cnv','Seabird cnv (*.cnv)'},...
+          'Select file');
+        if isnumeric(fileName)
+          if fileName == 0
+            error('readCnv: empty fileName');
+          end
+        end
+        self.fileName = fullfile(pathName, fileName);
+      else
+        self.fileName = fileName;
       end
-     
-      % post initialization
-      self.fileNames = fullfile(pathName, fileNames);
       
-      % read and extract data from file(s)
-      for f = self.fileNames
-        file = char(f);
-        read(self, file);
-      end
+      % read and extract data from file
+      read(self);
     end % end of constructor
     
     % read files and fill containers.Map
     % -----------------------------------------
-    function  read(self,file)
+    function  read(self)
       
-      fprintf(1, 'read file: %s\n', file);
-      [fid, errmsg] = fopen(file);
+      fprintf(1, 'read file: %s\n', self.fileName);
+      [fid, errmsg] = fopen(self.fileName);
       if fid == -1
         error('readCnv:read', 'error: %s', errmsg);
       end
