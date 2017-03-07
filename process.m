@@ -324,8 +324,13 @@ classdef process < handle
         
         % execute sbe-processing followin user selection
         function execProcessing(self)
-            files = dir(fullfile(self.rawDir,strcat(self.cruisePrefix,...
-                self.profileUserInput,'.hex')));
+            fpath = fullfile(self.rawDir,strcat(self.cruisePrefix,...
+                self.profileUserInput,'.hex'));
+            files = dir(fpath);
+            if isempty(files)
+              error('process:execProcessing',...
+                            'no file found for: %s', fpath);
+            end
             for i=1:length(files)
                 [~,station,~] = fileparts(files(i).name);
                 switch self.typeOfProcessing
