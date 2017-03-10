@@ -173,6 +173,10 @@ classdef readCnv < containers.Map & handle
       read(self);
     end % end of constructor
     
+    function fileName = get.fileName(self)
+      fileName = self.fileName;
+    end
+    
     % read files and fill containers.Map
     % -----------------------------------------
     function  read(self)
@@ -400,7 +404,7 @@ classdef readCnv < containers.Map & handle
           % implement obj.PropertyName
           if length(s) == 1
             switch s(1).subs
-              case { 'ctdType','seasaveVersion','calibration',...
+              case { 'fileName','ctdType','seasaveVersion','calibration',...
                   'profile','date','julian','latitude','longitude',...
                   'plateforme','cruise'}
                 sref = self.(s(1).subs);
