@@ -131,7 +131,7 @@ classdef readCnv < containers.Map & handle
     % these properties are used to store keys
     varNamesList = {}
     sensorsList  = {}
-    theSize
+    dimension
   end
   
   properties (SetAccess = public)
@@ -325,7 +325,7 @@ classdef readCnv < containers.Map & handle
       % read the end-of-file
       theData = fscanf(fid, '%g', [columns Inf]);
       theData = theData'; % transpose matrix
-      self.theSize = size(theData,1);
+      self.dimension = size(theData,1);
       
       % set inherited containers.Map from matrix theData
       % see http://fr.mathworks.com/matlabcentral/newsreader/view_thread/250895
@@ -362,7 +362,7 @@ classdef readCnv < containers.Map & handle
       %display(self.elements(self, self.varNamesList));
       for v = self.varNamesList
         str = sprintf('''%s''', char(v));
-        fprintf(1, '\t%-15s\t\t\t[%d x 1]\n', str, self.theSize);
+        fprintf(1, '\t%-15s\t\t\t[%d x 1]\n', str, self.dimension);
       end
     end
     
@@ -406,7 +406,7 @@ classdef readCnv < containers.Map & handle
             switch s(1).subs
               case { 'fileName','ctdType','seasaveVersion','calibration',...
                   'profile','date','julian','latitude','longitude',...
-                  'plateforme','cruise'}
+                  'plateforme','cruise','dimension'}
                 sref = self.(s(1).subs);
               case { 'sensors', 'varNames'}
                 sref = self.(s(1).subs);
