@@ -309,9 +309,12 @@ classdef readCnv < containers.Map & handle
         match = regexp( tline,...
           '^#\s*name\s*(\d+)\s*=\s*(.+?):\s*(.+?)$', 'tokens');
         if ~isempty(match)
-          self.varNamesList = [self.varNamesList, match{1}{2}];
-          self.varList(match{1}{1}) = match{1}{2};
-          self.varNames(match{1}{2}) = match{1}{3};
+          name = match{1}{2};
+          name = strrep(name,'/','');
+          name = strrep(name,'é','');
+          self.varNamesList = [self.varNamesList, name];
+          self.varList(match{1}{1}) = name;
+          self.varNames(name) = match{1}{3};
           continue
         end
       end % end of header
@@ -444,6 +447,37 @@ classdef readCnv < containers.Map & handle
           error('Not a supported indexing expression')
       end
     end % end of subsref
+    
+    % save data in mat file
+    % ---------------------
+    function saveObj(self)
+      
+      % change .cnv extention to .mat
+      [cnvFolder, baseName, ~] = fileparts( self.fileName);
+      matBaseName = sprintf('%s.mat',baseName);
+      matFolder = strrep(cnvFolder,'cnv','mat');
+      if ~isdir(matFolder)
+        mkdir(matFolder)
+      end
+      matFullName = fullfile(matFolder, matBaseName);
+      save( matFullName, 'self', '-v7.3');
+    end % end of saveObj
+    
+    % save data in netcdf file
+    % ------------------------
+    function saveNc(self)
+      
+      % change .cnv extention to .mat
+     [cnvFolder, baseName, ~] = fileparts( self.fileName);
+      ncBaseName = sprintf('%s.nc',baseName);
+      ncFolder = strrep(cnvFolder,'cnv','nc');
+      if ~isdir(ncFolder)
+        mkdir(ncFolder)
+      end
+      ncFullName = fullfile(ncFolder, ncBaseName);
+      writeNetcdf(self, ncFullName);
+      
+    end % end of saveObj
     
   end % end of public methods
   
