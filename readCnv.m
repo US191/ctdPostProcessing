@@ -121,6 +121,12 @@ classdef readCnv < containers.Map & handle
   % values(r.sensors)
   % r.sensors.('A/D voltage 0, Oxygen, SBE 43')
   %    3261
+  % % save objet in mat file
+  % saveObj(r)
+  % % save object in NetCDF4 file under raw group
+  % saveNc(r)
+  % ncdisp('C:\git\ctdPostProcessing\examples\fr26\data\nc\dfr26001.nc')
+  % ncread('C:\git\ctdPostProcessing\examples\fr26\data\nc\dfr26001.nc','raw/t090C')
   %
   % J. Grelet IRD US191 IMAGO - 2017
   

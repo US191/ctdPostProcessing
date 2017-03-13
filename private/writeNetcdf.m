@@ -17,7 +17,7 @@ function writeNetcdf(self, varargin)
 % r = readCnv('C:\git\ctdPostProcessing\examples\fr26\data\cnv\dfr26001.cnv')
 % saveNc(r)
 % ncdisp('C:\git\ctdPostProcessing\examples\fr26\data\nc\dfr26001.nc')
-% ncread('C:\git\ctdPostProcessing\examples\fr26\data\nc\dfr26001.nc','raw/SST')
+% ncread('C:\git\ctdPostProcessing\examples\fr26\data\nc\dfr26001.nc','raw/t090C')
 % 
 % TODOS: 
 %
