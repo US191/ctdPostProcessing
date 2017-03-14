@@ -18,8 +18,8 @@ function writeNetcdf(self, varargin)
 % saveNc(r)
 % ncdisp('C:\git\ctdPostProcessing\examples\fr26\data\nc\dfr26001.nc')
 % ncread('C:\git\ctdPostProcessing\examples\fr26\data\nc\dfr26001.nc','raw/t090C')
-% 
-% TODOS: 
+%
+% TODOS:
 %
 % $Id$
 
@@ -33,7 +33,7 @@ switch length(varargin)
     fileName = char(varargin{1});
     mode = char(varargin{2});
     
-  otherwise 
+  otherwise
     error('readCnv:saveNc', 'one or two arg needed');
     
 end
@@ -52,7 +52,7 @@ cmode = bitor(cmode,netcdf.getConstant(mode));
 % create file
 root = netcdf.create(fileName, cmode);
 % write global attributes
-for i = { 'fileName','ctdType','seasaveVersion', 'plateforme','cruise'} 
+for i = { 'fileName','ctdType','seasaveVersion', 'plateforme','cruise'}
   att = char(i);
   netcdf.putAtt(root, NC_GLOBAL, att, self.(att));
 end
@@ -62,20 +62,20 @@ if ispc
 else
   netcdf.putAtt(root, NC_GLOBAL, 'created_by', getenv('LOGNAME'));
 end
-netcdf.putAtt(root, NC_GLOBAL, 'date_type','OceanSITES profile data')  
-netcdf.putAtt(root, NC_GLOBAL, 'format_version','1.2')  
-netcdf.putAtt(root, NC_GLOBAL, 'netcdf_version', netcdf.inqLibVers)  
-netcdf.putAtt(root, NC_GLOBAL, 'Conventions','CF-1.6, OceanSITES-1.2')   
+netcdf.putAtt(root, NC_GLOBAL, 'date_type','OceanSITES profile data')
+netcdf.putAtt(root, NC_GLOBAL, 'format_version','1.2')
+netcdf.putAtt(root, NC_GLOBAL, 'netcdf_version', netcdf.inqLibVers)
+netcdf.putAtt(root, NC_GLOBAL, 'Conventions','CF-1.6, OceanSITES-1.2')
 netcdf.putAtt(root, NC_GLOBAL, 'comment', 'Data read from readCnv program');
 
 % define dimensions
-dimidT = netcdf.defDim(root, 'TIME', length(self.julian));    
+dimidT = netcdf.defDim(root, 'TIME', length(self.julian));
 dimidY = netcdf.defDim(root, 'LATITUDE', length(self.latitude));
 dimidX = netcdf.defDim(root, 'LONGITUDE', length(self.longitude));
 dimidZ = netcdf.defDim(root, 'DEPTH', self.dimension);
 
 % define axis and put values
-varid = netcdf.defVar(root, 'TIME', 'double', dimidT);         
+varid = netcdf.defVar(root, 'TIME', 'double', dimidT);
 netcdf.putAtt(root, varid, 'standard_name', 'time');
 netcdf.putAtt(root, varid, 'long_name', 'Time of measurements');
 netcdf.putAtt(root, varid, 'units', 'days since 1950-01-01T00:00:00Z');
@@ -100,19 +100,20 @@ netcdf.putVar(root, varid,self.longitude);
 raw = netcdf.defGrp(root, 'raw');
 netcdf.putAtt(raw, NC_GLOBAL,'comment', 'This group contains raw data')
 
-% insert data attributes and value
-for k = keys(self)
+% insert data attributes and value using ordered keys
+for k = self.varNamesList
   key = char(k);
   varid = netcdf.defVar(raw, key ,'float',[dimidZ, dimidT]);
   netcdf.putAtt(raw, varid, 'name', key);
-  netcdf.putAtt(raw, varid, 'long_name', self.varNames(key));
-  % ex:  Oxygen, SBE 43, 2 [dov/dt] -> extract: dov/dt
-  str = self.varNames(key); unit = '';
-  match = regexp( str, '.*?\[(.*?)\]', 'tokens');
+  % ex:  Oxygen, SBE 43, 2 [dov/dt] -> longName =  and unit = dov/dt
+  str = self.varNames(key);
+  match = regexp( str, '(.*?)\s*\[(.*?)\]', 'tokens');
   if ~isempty(match)
-    unit = match{1}{1};
+    netcdf.putAtt(raw, varid, 'long_name', match{1}{1});
+    netcdf.putAtt(raw, varid, 'units', match{1}{2});
+  else
+    netcdf.putAtt(raw, varid, 'long_name', str);
   end
-  netcdf.putAtt(raw, varid, 'units', unit);
   netcdf.defVarFill(raw, varid, false, fillValue);
   netcdf.putVar(raw, varid, self(key));
 end

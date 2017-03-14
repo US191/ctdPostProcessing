@@ -421,7 +421,7 @@ classdef readCnv < containers.Map & handle
                   'profile','date','julian','latitude','longitude',...
                   'plateforme','cruise','dimension'}
                 sref = self.(s(1).subs);
-              case { 'sensors', 'varNames'}
+              case { 'sensors', 'varNames','varNamesList'}
                 sref = self.(s(1).subs);
               otherwise
                 t.type = '()';
