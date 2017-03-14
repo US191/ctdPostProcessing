@@ -128,6 +128,9 @@ classdef readCnv < containers.Map & handle
   % ncdisp('C:\git\ctdPostProcessing\examples\fr26\data\nc\dfr26001.nc')
   % ncread('C:\git\ctdPostProcessing\examples\fr26\data\nc\dfr26001.nc','raw/t090C')
   %
+  % TODOS:
+  % add interactive plots with QC
+  %
   % J. Grelet IRD US191 IMAGO - 2017
   
   properties   (Access = private)
@@ -316,6 +319,7 @@ classdef readCnv < containers.Map & handle
           '^#\s*name\s*(\d+)\s*=\s*(.+?):\s*(.+?)$', 'tokens');
         if ~isempty(match)
           name = match{1}{2};
+          % remove invalid character for netcdflib
           name = strrep(name,'/','');
           name = strrep(name,'é','');
           self.varNamesList = [self.varNamesList, name];
@@ -466,6 +470,8 @@ classdef readCnv < containers.Map & handle
         mkdir(matFolder)
       end
       matFullName = fullfile(matFolder, matBaseName);
+      % disp info on console
+      fprintf(1,'writing mat file: %s\n', matFullName);
       save( matFullName, 'self', '-v7.3');
     end % end of saveObj
     
