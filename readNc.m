@@ -58,6 +58,33 @@ classdef readNc  < dynamicprops
       
     end % end of constructor
     
+    % overload the subsref functions
+    % works with:
+    % nc.raw('c0Sm')
+    % nc.raw.c0Sm
+    % ------------------------------
+    function sref = subsref(self,s)
+      switch s(1).type
+        case '.'
+          % implement obj.PropertyName
+          if length(s) == 1
+            sref = self.(s(1).subs);
+            
+          elseif length(s) == 2 && strcmp(s(2).type,'.')
+            val = self.(s(1).subs);
+            sref = val(s(2).subs);
+          elseif length(s) == 2 && strcmp(s(2).type,'()')
+            val = self.(s(1).subs);
+            sref = val(char(s(2).subs));
+          end
+        case '()'
+          error('Not a supported indexing expression')
+        case '{}'
+          error('Not a supported indexing expression')
+      end
+    end % end of subsref
+          
+    
   end % end of public methods
   
 end % end of class
