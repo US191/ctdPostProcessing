@@ -7,8 +7,8 @@ classdef readNc  < dynamicprops
   end
   
   properties
-    root = containers.Map
-    raw = containers.Map
+%     root = containers.Map
+%     raw = containers.Map
   end
   
   methods % public methods
@@ -31,21 +31,31 @@ classdef readNc  < dynamicprops
         self.fileName = fileName;
       end
       
+      % add dynamic properties for group
+      
       % read variables from root group
       info = ncinfo(self.fileName);
+      addprop(self, 'root');
+      self.root = containers.Map;
       for i = 1: length(info.Variables)
         varName = info.Variables(i).Name;
         value = ncread(self.fileName, varName);
         self.root(varName) = value;
       end
       
-      % read variables from raw group
-      info = ncinfo(self.fileName, 'raw');
-      for i = 1: length(info.Variables)
-        varName = info.Variables(i).Name;
-        value = ncread(self.fileName, sprintf('raw/%s', varName));
-        self.raw(varName) = value;
+      % read variables from all group
+      for grp = 1: length(info.Groups)
+        groupName = info.Groups(grp).Name;
+        groupInfo = ncinfo(self.fileName, groupName);
+        addprop(self, groupName);
+        self.(groupName) = containers.Map;
+        for var = 1: length(groupInfo.Variables)
+          varName = groupInfo.Variables(var).Name;
+          value = ncread(self.fileName, sprintf('%s/%s', groupName, varName));
+          self.(groupName)(varName) = value;
+        end
       end
+      
     end % end of constructor
     
   end % end of public methods
