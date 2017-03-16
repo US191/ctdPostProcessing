@@ -62,6 +62,8 @@ classdef readNc  < dynamicprops
     % works with:
     % nc.raw('c0Sm')
     % nc.raw.c0Sm
+    % nc.keys('raw')  give n x 1 cell array
+    % keys(nc.raw)    give 1 x n cell array
     % ------------------------------
     function sref = subsref(self,s)
       switch s(1).type
@@ -69,13 +71,17 @@ classdef readNc  < dynamicprops
           % implement obj.PropertyName
           if length(s) == 1
             sref = self.(s(1).subs);
-            
           elseif length(s) == 2 && strcmp(s(2).type,'.')
             val = self.(s(1).subs);
             sref = val(s(2).subs);
           elseif length(s) == 2 && strcmp(s(2).type,'()')
-            val = self.(s(1).subs);
-            sref = val(char(s(2).subs));
+            switch s(1).subs
+              case { 'keys'}  % give n x 1 cell array
+                sref = keys(self.(char(s(2).subs)))';
+              otherwise
+                val = self.(s(1).subs);
+                sref = val(char(s(2).subs));
+            end
           end
         case '()'
           error('Not a supported indexing expression')
