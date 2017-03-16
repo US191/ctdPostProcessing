@@ -140,6 +140,7 @@ classdef readCnv < containers.Map & handle
     % these properties are used to store keys
     varNamesList = {}
     sensorsList  = {}
+    headerInd    = 1
     dimension
   end
   
@@ -154,6 +155,7 @@ classdef readCnv < containers.Map & handle
     longitude
     plateforme
     cruise
+    header      =  containers.Map('KeyType','int32','ValueType','char')
     varNames    =  containers.Map
     sensors     =  containers.Map
   end
@@ -203,6 +205,10 @@ classdef readCnv < containers.Map & handle
         if ~isempty(strfind(tline,'*END'))  % end of header
           break;
         end
+        
+        % store each header line in map
+        self.header(self.headerInd) = tline;
+        self.headerInd = self.headerInd + 1;
         
         % extract CTD type
         % ex: * Sea-Bird SBE 9 Data File:
@@ -419,7 +425,7 @@ classdef readCnv < containers.Map & handle
             switch s(1).subs
               case { 'fileName','ctdType','seasaveVersion','calibration',...
                   'profile','date','julian','latitude','longitude',...
-                  'plateforme','cruise','dimension'}
+                  'plateforme','cruise','dimension','header'}
                 sref = self.(s(1).subs);
               case { 'sensors', 'varNames','varNamesList'}
                 sref = self.(s(1).subs);
@@ -431,9 +437,18 @@ classdef readCnv < containers.Map & handle
           elseif length(s) == 2 && strcmp(s(2).type,'()')
             % implement obj.PropertyName(indices)
             switch s(1).subs
-              case { 'sensors','varNames'}
+              case { 'sensors','varNames','header'}
                 val = self.(s(1).subs);
-                sref = val(char(s(2).subs));
+                if strcmp(s(2).subs{1}, ':')
+                  hdr = self.(s(1).subs);
+                  sref = '';
+                  for i = 1: hdr.Count
+                    %sref = strcat(sref, sprintf('%s\n', hdr(i)));
+                    fprintf(1,'%s\n', hdr(i));
+                  end
+                else
+                  sref = val(s(2).subs{1});
+                end
               otherwise
                 t.type = '()';
                 t.subs = s(1).subs;
