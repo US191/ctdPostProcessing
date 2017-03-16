@@ -446,11 +446,17 @@ classdef readCnv < containers.Map & handle
               case { 'sensors','varNames','header'}
                 val = self.(s(1).subs);
                 if strcmp(s(2).subs{1}, ':')
-                  hdr = self.(s(1).subs);
-                  sref = '';
-                  for i = 1: hdr.Count
+                  map = self.(s(1).subs);
+                  k = keys(map);
+                  %sref = '';
+                  for i = 1: map.Count
                     %sref = strcat(sref, sprintf('%s\n', hdr(i)));
-                    fprintf(1,'%s\n', hdr(i));
+                    theKey = k{i};
+                    if isnumeric(theKey)
+                      fprintf(1,'%s\n', map(k{i}));
+                    else
+                      fprintf(1,'%s : %s\n', theKey, map(k{i}));
+                    end
                   end
                 else
                   sref = val(s(2).subs{1});
@@ -501,7 +507,7 @@ classdef readCnv < containers.Map & handle
     function saveNc(self)
       
       % change .cnv extention to .mat
-     [cnvFolder, baseName, ~] = fileparts( self.fileName);
+      [cnvFolder, baseName, ~] = fileparts( self.fileName);
       ncBaseName = sprintf('%s.nc',baseName);
       ncFolder = strrep(cnvFolder,'cnv','nc');
       if ~isdir(ncFolder)
