@@ -127,6 +127,12 @@ classdef readCnv < containers.Map & handle
   % saveNc(r)
   % ncdisp('C:\git\ctdPostProcessing\examples\fr26\data\nc\dfr26001.nc')
   % ncread('C:\git\ctdPostProcessing\examples\fr26\data\nc\dfr26001.nc','raw/t090C')
+  % r.header(:)
+  % * Sea-Bird SBE 9 Data File:
+  % * FileName = C:\SEASOFT\PIRATA-FR26\data\fr26001.hex
+  % * Software Version Seasave V 7.23.2
+  % * Temperature SN = 6083
+  % ...
   %
   % TODOS:
   % add interactive plots with QC
