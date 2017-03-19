@@ -448,14 +448,14 @@ classdef readCnv < containers.Map & handle
                 if strcmp(s(2).subs{1}, ':')
                   map = self.(s(1).subs);
                   k = keys(map);
-                  %sref = '';
+                  sref = '';
                   for i = 1: map.Count
                     %sref = strcat(sref, sprintf('%s\n', hdr(i)));
                     theKey = k{i};
                     if isnumeric(theKey)
-                      fprintf(1,'%s\n', map(k{i}));
+                      sref = [sref, sprintf('%s\n', map(k{i}))]; %#ok<AGROW>
                     else
-                      fprintf(1,'%s : %s\n', theKey, map(k{i}));
+                      sref = [sref, sprintf('%s : %s\n', theKey, map(k{i}))]; %#ok<AGROW>
                     end
                   end
                 else

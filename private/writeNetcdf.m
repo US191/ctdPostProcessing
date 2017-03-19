@@ -51,6 +51,7 @@ cmode = bitor(cmode,netcdf.getConstant(mode));
 
 % create file
 root = netcdf.create(fileName, cmode);
+
 % write global attributes
 for i = { 'fileName','ctdType','seasaveVersion', 'plateforme','cruise'}
   att = char(i);
@@ -67,6 +68,13 @@ netcdf.putAtt(root, NC_GLOBAL, 'format_version','1.2')
 netcdf.putAtt(root, NC_GLOBAL, 'netcdf_version', netcdf.inqLibVers)
 netcdf.putAtt(root, NC_GLOBAL, 'Conventions','CF-1.6, OceanSITES-1.2')
 netcdf.putAtt(root, NC_GLOBAL, 'comment', 'Data read from readCnv program');
+
+% add seabird cnv header
+header = [];
+for i = keys(self.header)
+  header = [header, sprintf('%s\n', self.header(i{1}))]; %#ok<AGROW>
+end
+netcdf.putAtt(root, NC_GLOBAL, 'header', header);
 
 % define dimensions
 dimidT = netcdf.defDim(root, 'TIME', length(self.julian));
