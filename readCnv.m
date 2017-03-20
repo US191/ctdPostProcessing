@@ -134,6 +134,8 @@ classdef readCnv < containers.Map & handle
   % * Temperature SN = 6083
   % ...
   %
+  % runxunit('tests')
+  %
   % TODOS:
   % add interactive plots with QC
   %
@@ -428,17 +430,18 @@ classdef readCnv < containers.Map & handle
         case '.'
           % implement obj.PropertyName
           if length(s) == 1
-            switch s(1).subs
+            switch s.subs
               case { 'fileName','ctdType','seasaveVersion','calibration',...
                   'profile','date','julian','latitude','longitude',...
                   'plateforme','cruise','dimension','header'}
-                sref = self.(s(1).subs);
+                sref = self.(s.subs);
               case { 'sensors', 'varNames','varNamesList'}
-                sref = self.(s(1).subs);
+                sref = self.(s.subs);
+              case { 'saveNc', 'saveMat'}
+                self.(s.subs);
               otherwise
-                t.type = '()';
-                t.subs = s(1).subs;
-                sref = subsref@containers.Map(self,t);
+                s.type = '()';
+                sref = subsref@containers.Map(self,s);
             end
           elseif length(s) == 2 && strcmp(s(2).type,'()')
             % implement obj.PropertyName(indices)

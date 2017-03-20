@@ -1,54 +1,67 @@
-function [ root, raw ] = testReadNc(varargin)
-%UNTITLED Summary of this function goes here
-%   Detailed explanation goes here
-% use clear mex to close an opened NetCDF file
+classdef testReadNc < TestCase
+  %testReadCnv
+  % runxunit('tests')
+  
+  properties
+    ncFilename;
+    ncid
+  end
+  
+  methods
+    
+    % Constructor
+    %------------
+    function self = testReadNc(testMethod)
+      self = self@TestCase(testMethod);
+    end
+    
+    function setUp(self)
+      
+      % get the location of directory test class dynaload
+      pathStr = fileparts(mfilename('fullpath'));
+      
+      % construct test filename
+      self.ncFilename = fullfile(pathStr, 'test.nc');
+      self.ncid = netcdf.open(self.ncFilename, 'NOWRITE');
+%       assertExceptionThrown(netcdf.open('dummy.nc', 'NOWRITE'),...
+%         'MATLAB:imagesci:validate:fileOpen');
+    end
+    
+    function tearDown(self)
+      netcdf.close(self.ncid);
+    end
 
-if isempty(varargin)
-  file = 'M:\CASSIOPEE\data-processing\CTD\data\nc\tmp\csp00102.nc';
-else
-  file = varargin{1};
+    
+    % tests header
+    % ---------------
+    % seasaveVersion = '3.2'
+    % plateforme     = 'THALASSA'
+    % cruise         = 'PIRATA-FR26'
+    % date_created   = '2017-03-20T12:04:10Z'
+    % created_by     = 'jgrelet'
+    % data_type      = 'OceanSITES profile data'
+    % format_version = '1.2'
+    % netcdf_version = '4.3.3.1'
+    % Conventions    = 'CF-1.6, OceanSITES-1.2'
+    % comment        = 'Data read from readCnv program'
+    % header         = '* Sea-Bird SBE 9 Data File:
+    function testGlobalAttributes( self )
+      assertEqual(ncreadatt(self.ncFilename,'/', 'ctdType'), 'SBE 9 ');
+      assertEqual(ncreadatt(self.ncFilename,'/', 'plateforme'), 'THALASSA');
+      assertEqual(ncreadatt(self.ncFilename,'/', 'cruise'), 'PIRATA-FR26');
+      assertEqual(ncreadatt(self.ncFilename,'/', 'date_type'), 'OceanSITES profile data');
+      assertEqual(ncreadatt(self.ncFilename,'/', 'created_by'), 'jgrelet');
+      assertEqual(ncreadatt(self.ncFilename,'/', 'format_version'), '1.2');
+      assertEqual(ncreadatt(self.ncFilename,'/', 'netcdf_version'), '4.3.3.1');
+      assertEqual(ncreadatt(self.ncFilename,'/', 'Conventions'), 'CF-1.6, OceanSITES-1.2');
+      assertEqual(ncreadatt(self.ncFilename,'/', 'comment'), 'Data read from readCnv program');
+      header = ncreadatt(self.ncFilename,'/', 'header');
+      assertTrue(logical(strfind(header, '* Sea-Bird SBE 9 Data File:')));
+    end
+    
+   
+    
+  end
+  
 end
-
-ncid = netcdf.open(file,'nowrite');
-
-% Get the number of groups, and their ncids
-gids = netcdf.inqGrps(ncid);
-for i = 1: length(gids)
-  netcdf.inqGrpNameFull(gids(i));  % display group name
-end 
-
-% Return ID of named group
-gid = netcdf.inqNcid(ncid,'raw');
-% IDs of all variables in group
-varids = netcdf.inqVarIDs(gid);
-% Return ID associated with variable name
-%varid = netcdf.inqVarID(ncid,varname);
-
-for varid = varids
-  % get information about variable
-  [varname,xtype,dimids,natts] = netcdf.inqVar(gid,varid); %#ok<ASGLU>
-end
-netcdf.close(ncid);
-
-
-% get information and data 
-ncinfo(file,'TIME');
-ncread(file,'TIME');
-ncinfo(file,'raw');
-ncinfo(file,'raw/sal00');
-ncread(file,'raw/sal00');
-
-% use containers.Map
-root = containers.Map;
-info = ncinfo(file);
-for i = 1: length(info.Variables)
-  root(info.Variables(i).Name) = i;
-end
-
-raw = containers.Map;
-info = ncinfo(file, 'raw');
-for i = 1: length(info.Variables)
-  raw(info.Variables(i).Name) = i;
-end
-
 
