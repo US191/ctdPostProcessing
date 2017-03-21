@@ -1,10 +1,11 @@
 classdef testReadNc < TestCase
-  %testReadCnv
+  %testReadNc
   % runxunit('tests')
   
   properties
     ncFilename;
     ncid
+    cnvObj
   end
   
   methods
@@ -22,6 +23,7 @@ classdef testReadNc < TestCase
       
       % construct test filename
       self.ncFilename = fullfile(pathStr, 'test.nc');
+      self.cnvObj     = fullfile(pathStr, 'test.cnv');
       self.ncid = netcdf.open(self.ncFilename, 'NOWRITE');
 %       assertExceptionThrown(netcdf.open('dummy.nc', 'NOWRITE'),...
 %         'MATLAB:imagesci:validate:fileOpen');
