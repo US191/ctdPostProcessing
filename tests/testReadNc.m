@@ -46,7 +46,7 @@ classdef testReadNc < TestCase
     % comment        = 'Data read from readCnv program'
     % header         = '* Sea-Bird SBE 9 Data File:
     function testGlobalAttributes( self )
-      assertEqual(ncreadatt(self.ncFilename,'/', 'ctdType'), 'SBE 9 ');
+      assertEqual(ncreadatt(self.ncFilename,'/', 'ctdtype'), 'SBE 9 ');
       assertEqual(ncreadatt(self.ncFilename,'/', 'plateforme'), 'THALASSA');
       assertEqual(ncreadatt(self.ncFilename,'/', 'cruise'), 'PIRATA-FR26');
       assertEqual(ncreadatt(self.ncFilename,'/', 'date_type'), 'OceanSITES profile data');

@@ -9,15 +9,20 @@ classdef readCnv < containers.Map & handle
   %
   % r =
   %
-  % 	cruise:          PIRATA-FR26
-  % 	plateforme:      THALASSA
-  % 	profile:         1
-  % 	date:             736398.728414
-  % 	julian:          24174.728414
-  % 	latitude:        11.465000
-  % 	longitude:       -23.000167
-  % 	ctdType:         SBE 9
-  % 	seasaveVersion:  3.2
+  % 	Cruise:          PIRATA-FR26
+  % 	Plateforme:      THALASSA
+  % 	Profile:         1
+  % 	Date:             736398.728414
+  % 	Julian:          24174.728414
+  % 	Latitude:        11.465000
+  % 	Longitude:       -23.000167
+  % 	CtdType:         SBE 9
+  % 	SeasaveVersion:  3.2
+  %   Header:          * Sea-Bird SBE 9 Data File:
+  %                    * FileName = C:\SEASOFT\PIRATA-FR26\data\fr26001.hex
+  %                    * Software Version Seasave V 7.23.2
+  %                    * Temperature SN = 6083
+  %                    ...
   %
   % varNames: 27×2 cell array
   %
@@ -92,9 +97,9 @@ classdef readCnv < containers.Map & handle
   %     'nbin'          [2022×1 double]
   %     'flag'          [2022×1 double]
   %
-  % r.latitude
+  % r.Latitude
   %    11.4650
-  % r.date
+  % r.Date
   %    7.3640e+05
   % keys(r)
   % values(r)
@@ -110,13 +115,10 @@ classdef readCnv < containers.Map & handle
   % r.varNames.t090C
   %    Temperature [ITS-90, deg C]
   % r.varNames.('t090C')
-  % r.varNames.sbeox1dOV/dT
-  %    The specified key is not present in this container.
-  %    Matlab evaluate r.varNames.sbeox1dOV first before divide by dT
-  %    Use the following notation instead:
-  % r.varNames('sbeox1dOV/dT')
+  % r.varNames.sbeox1dOVdT
+ %    Temperature [ITS-90, deg C]
+  % r.varNames('sbeox1dOVdT')
   %    Temperature [ITS-90, deg C]
-  %
   % keys(r.sensors)
   % values(r.sensors)
   % r.sensors.('A/D voltage 0, Oxygen, SBE 43')
@@ -127,13 +129,13 @@ classdef readCnv < containers.Map & handle
   % saveNc(r)
   % ncdisp('C:\git\ctdPostProcessing\examples\fr26\data\nc\dfr26001.nc')
   % ncread('C:\git\ctdPostProcessing\examples\fr26\data\nc\dfr26001.nc','raw/t090C')
-  % r.header(:)
+  % r.Header(:)
   % * Sea-Bird SBE 9 Data File:
   % * FileName = C:\SEASOFT\PIRATA-FR26\data\fr26001.hex
   % * Software Version Seasave V 7.23.2
   % * Temperature SN = 6083
   % ...
-  %
+  % % run unit test framework :
   % runxunit('tests')
   %
   % TODOS:
@@ -143,7 +145,8 @@ classdef readCnv < containers.Map & handle
   
   properties   (Access = private)
     fileName
-    varList     =  containers.Map;
+    echo        = true               % default
+    varList     =  containers.Map
     % the iteration order over containers.Maps is ordered.
     % these properties are used to store keys
     varNamesList = {}
@@ -153,17 +156,17 @@ classdef readCnv < containers.Map & handle
   end
   
   properties (SetAccess = public)
-    ctdType
-    seasaveVersion
-    calibration
-    profile
-    date           % internal Matlab date representation
-    julian
-    latitude
-    longitude
-    plateforme
-    cruise
-    header      =  containers.Map('KeyType','int32','ValueType','char')
+    CtdType
+    SeasaveVersion
+    Calibration
+    Profile
+    Date           % internal Matlab date representation
+    Julian
+    Latitude
+    Longitude
+    Plateforme
+    Cruise
+    Header      =  containers.Map('KeyType','int32','ValueType','char')
     varNames    =  containers.Map
     sensors     =  containers.Map
   end
@@ -172,7 +175,7 @@ classdef readCnv < containers.Map & handle
     
     % constructor
     % --------------------------------
-    function self = readCnv(fileName)
+    function self = readCnv(fileName, varargin)
       
       % pre initialization - select filename
       if nargin < 1 || isempty(fileName)
@@ -187,6 +190,9 @@ classdef readCnv < containers.Map & handle
       else
         self.fileName = fileName;
       end
+      if nargin == 2 && islogical(varargin{1})
+        self.echo = varargin{1};
+      end
       
       % read and extract data from file
       read(self);
@@ -200,7 +206,9 @@ classdef readCnv < containers.Map & handle
     % -----------------------------------------
     function  read(self)
       
-      fprintf(1, 'read file: %s\n', self.fileName);
+      if self.echo
+        fprintf(1, 'read file: %s\n', self.fileName);
+      end
       [fid, errmsg] = fopen(self.fileName);
       if fid == -1
         error('readCnv:read', 'error: %s', errmsg);
@@ -215,7 +223,7 @@ classdef readCnv < containers.Map & handle
         end
         
         % store each header line in map
-        self.header(self.headerInd) = tline;
+        self.Header(self.headerInd) = tline;
         self.headerInd = self.headerInd + 1;
         
         % extract CTD type
@@ -224,7 +232,7 @@ classdef readCnv < containers.Map & handle
         match = regexp( tline,...
           '^*\s*Sea-Bird\s*(.+)\s*Data File:', 'tokens');
         if ~isempty(match)
-          self.ctdType = match{1}{1};
+          self.CtdType = match{1}{1};
           continue
         end
         
@@ -235,7 +243,7 @@ classdef readCnv < containers.Map & handle
         s = regexp(tline,...
           '^*\s*Software Version Seasave.*(?<VERSION>\d+\.\d+)', 'names');
         if ~isempty(s)
-          self.seasaveVersion = s.VERSION;
+          self.SeasaveVersion = s.VERSION;
           continue
         end
         
@@ -269,8 +277,8 @@ classdef readCnv < containers.Map & handle
           sec   = match{1}{6};
           
           % convert date and time of launch to internal matlab datenum
-          self.date   = datenum([year month day hour min sec],'yyyymmmddHHMMSS');
-          self.julian = datenumToJulian(self, self.date);
+          self.Date   = datenum([year month day hour min sec],'yyyymmmddHHMMSS');
+          self.Julian = datenumToJulian(self, self.Date);
           continue
         end
         
@@ -283,7 +291,7 @@ classdef readCnv < containers.Map & handle
           deg  = str2double(match{1}{1});
           min  = str2double(match{1}{2});
           hemi = match{1}{3};
-          self.latitude = degMinToDec(self, deg, min, hemi);
+          self.Latitude = degMinToDec(self, deg, min, hemi);
           continue
         end
         
@@ -294,7 +302,7 @@ classdef readCnv < containers.Map & handle
           deg  = str2double(match{1}{1});
           min  = str2double(match{1}{2});
           hemi  = match{1}{3};
-          self.longitude = degMinToDec(self, deg, min, hemi);
+          self.Longitude = degMinToDec(self, deg, min, hemi);
           continue
         end
         
@@ -303,7 +311,7 @@ classdef readCnv < containers.Map & handle
         match = regexp( tline,...
           '^**\s*Ship\s*:\s*(\w.+)$', 'tokens');
         if ~isempty(match)
-          self.plateforme = match{1}{1};
+          self.Plateforme = match{1}{1};
           continue
         end
         
@@ -312,7 +320,7 @@ classdef readCnv < containers.Map & handle
         match = regexp( tline,...
           '^**\s*Cruise\s*:\s*(\w.+)$', 'tokens');
         if ~isempty(match)
-          self.cruise = match{1}{1};
+          self.Cruise = match{1}{1};
           continue
         end
         
@@ -321,7 +329,7 @@ classdef readCnv < containers.Map & handle
         match = regexp( tline,...
           '^**\s*[Ss]tation\s*:\s*(\d+)', 'tokens');
         if ~isempty(match)
-          self.profile = match{1}{1};
+          self.Profile = match{1}{1};
           continue
         end
         
@@ -373,15 +381,15 @@ classdef readCnv < containers.Map & handle
     function disp(self)
       
       % display aditionnals sbe911 properties
-      fprintf('\tcruise:          %s\n', self.cruise);
-      fprintf('\tplateforme:      %s\n', self.plateforme);
-      fprintf('\tprofile:         %s\n', self.profile);
-      fprintf('\tdate:            %f\n', self.date);
-      fprintf('\tjulian:          %f\n', self.julian);
-      fprintf('\tlatitude:        %f\n', self.latitude);
-      fprintf('\tlongitude:       %f\n', self.longitude);
-      fprintf('\tctdType:         %s\n', self.ctdType);
-      fprintf('\tseasaveVersion:  %s\n', self.seasaveVersion);
+      fprintf('\tCruise:          %s\n', self.Cruise);
+      fprintf('\tPlateforme:      %s\n', self.Plateforme);
+      fprintf('\tProfile:         %s\n', self.Profile);
+      fprintf('\tDate:            %f\n', self.Date);
+      fprintf('\tJulian:          %f\n', self.Julian);
+      fprintf('\tLatitude:        %f\n', self.Latitude);
+      fprintf('\tLongitude:       %f\n', self.Longitude);
+      fprintf('\tCtdType:         %s\n', self.CtdType);
+      fprintf('\tSeasaveVersion:  %s\n', self.SeasaveVersion);
       fprintf('\nvarNames:');
       display(self.elements(self.varNames, self.varNamesList));
       fprintf('sensors:');
@@ -431,9 +439,9 @@ classdef readCnv < containers.Map & handle
           % implement obj.PropertyName
           if length(s) == 1
             switch s.subs
-              case { 'fileName','ctdType','seasaveVersion','calibration',...
-                  'profile','date','julian','latitude','longitude',...
-                  'plateforme','cruise','dimension','header'}
+              case { 'fileName','CtdType','SeasaveVersion','Calibration',...
+                  'Profile','Date','Julian','Latitude','Longitude',...
+                  'Plateforme','Cruise','dimension','Header','echo'}
                 sref = self.(s.subs);
               case { 'sensors', 'varNames','varNamesList'}
                 sref = self.(s.subs);
@@ -446,7 +454,7 @@ classdef readCnv < containers.Map & handle
           elseif length(s) == 2 && strcmp(s(2).type,'()')
             % implement obj.PropertyName(indices)
             switch s(1).subs
-              case { 'sensors','varNames','header'}
+              case { 'sensors','varNames','Header'}
                 val = self.(s(1).subs);
                 if strcmp(s(2).subs{1}, ':')
                   map = self.(s(1).subs);

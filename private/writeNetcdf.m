@@ -39,7 +39,9 @@ switch length(varargin)
 end
 
 % disp info on console
-fprintf(1,'writing netcdf file: %s\n', fileName);
+if self.echo
+  fprintf(1,'writing netcdf file: %s\n', fileName);
+end
 
 % define useful constants:
 NC_GLOBAL = netcdf.getConstant('NC_GLOBAL');
@@ -53,9 +55,9 @@ cmode = bitor(cmode,netcdf.getConstant(mode));
 root = netcdf.create(fileName, cmode);
 
 % write global attributes
-for i = { 'fileName','ctdType','seasaveVersion', 'plateforme','cruise'}
+for i = { 'fileName','CtdType','SeasaveVersion', 'Plateforme','Cruise'}
   att = char(i);
-  netcdf.putAtt(root, NC_GLOBAL, att, self.(att));
+  netcdf.putAtt(root, NC_GLOBAL, lower(att), self.(att));
 end
 netcdf.putAtt(root, NC_GLOBAL, 'date_created', datestr(now,'yyyy-mm-ddTHH:MM:SSZ'))
 if ispc
@@ -71,15 +73,15 @@ netcdf.putAtt(root, NC_GLOBAL, 'comment', 'Data read from readCnv program');
 
 % add seabird cnv header
 header = [];
-for i = keys(self.header)
-  header = [header, sprintf('%s\n', self.header(i{1}))]; %#ok<AGROW>
+for i = keys(self.Header)
+  header = [header, sprintf('%s\n', self.Header(i{1}))]; %#ok<AGROW>
 end
 netcdf.putAtt(root, NC_GLOBAL, 'header', header);
 
 % define dimensions
-dimidT = netcdf.defDim(root, 'TIME', length(self.julian));
-dimidY = netcdf.defDim(root, 'LATITUDE', length(self.latitude));
-dimidX = netcdf.defDim(root, 'LONGITUDE', length(self.longitude));
+dimidT = netcdf.defDim(root, 'TIME', length(self.Julian));
+dimidY = netcdf.defDim(root, 'LATITUDE', length(self.Latitude));
+dimidX = netcdf.defDim(root, 'LONGITUDE', length(self.Longitude));
 dimidZ = netcdf.defDim(root, 'DEPTH', self.dimension);
 
 % define axis and put values
@@ -88,21 +90,21 @@ netcdf.putAtt(root, varid, 'standard_name', 'time');
 netcdf.putAtt(root, varid, 'long_name', 'Time of measurements');
 netcdf.putAtt(root, varid, 'units', 'days since 1950-01-01T00:00:00Z');
 netcdf.defVarFill(root, varid, false, fillValue);
-netcdf.putVar(root, varid, self.julian);
+netcdf.putVar(root, varid, self.Julian);
 
 varid = netcdf.defVar(root, 'LATITUDE', 'float', dimidY);
 netcdf.putAtt(root, varid, 'standard_name', 'latitude');
 netcdf.putAtt(root, varid, 'long_name', 'Station latitude');
 netcdf.putAtt(root, varid, 'units', 'degrees_north');
 netcdf.defVarFill(root, varid, false, fillValue);
-netcdf.putVar(root, varid, self.latitude);
+netcdf.putVar(root, varid, self.Latitude);
 
 varid = netcdf.defVar(root,'LONGITUDE','float', dimidX);
 netcdf.putAtt(root, varid,'standard_name','longitude');
 netcdf.putAtt(root, varid,'long_name','Station longitude');
 netcdf.putAtt(root, varid,'units','degrees_east');
 netcdf.defVarFill(root, varid,false,fillValue);
-netcdf.putVar(root, varid,self.longitude);
+netcdf.putVar(root, varid,self.Longitude);
 
 % define raw group
 raw = netcdf.defGrp(root, 'raw');
