@@ -116,7 +116,7 @@ classdef readCnv < containers.Map & handle
   %    Temperature [ITS-90, deg C]
   % r.varNames.('t090C')
   % r.varNames.sbeox1dOVdT
- %    Temperature [ITS-90, deg C]
+  %    Temperature [ITS-90, deg C]
   % r.varNames('sbeox1dOVdT')
   %    Temperature [ITS-90, deg C]
   % keys(r.sensors)
@@ -358,7 +358,7 @@ classdef readCnv < containers.Map & handle
       columns = length(theKeys);
       
       % read the end-of-file
-      theData = fscanf(fid, '%g', [columns Inf]);
+      theData = fscanf(fid, '%lf', [columns Inf]);
       theData = theData'; % transpose matrix
       self.dimension = size(theData,1);
       
@@ -384,10 +384,10 @@ classdef readCnv < containers.Map & handle
       fprintf('\tCruise:          %s\n', self.Cruise);
       fprintf('\tPlateforme:      %s\n', self.Plateforme);
       fprintf('\tProfile:         %s\n', self.Profile);
-      fprintf('\tDate:            %f\n', self.Date);
-      fprintf('\tJulian:          %f\n', self.Julian);
-      fprintf('\tLatitude:        %f\n', self.Latitude);
-      fprintf('\tLongitude:       %f\n', self.Longitude);
+      fprintf('\tDate:            %s\n', datestr(self.Date, 'yyyy-mm-ddTHH:MM:SSZ'));
+      fprintf('\tJulian:          %12.6f\n', self.Julian);
+      fprintf('\tLatitude:        %11.8f\n', self.Latitude);
+      fprintf('\tLongitude:       %12.8f\n', self.Longitude);
       fprintf('\tCtdType:         %s\n', self.CtdType);
       fprintf('\tSeasaveVersion:  %s\n', self.SeasaveVersion);
       fprintf('\nvarNames:');
@@ -407,7 +407,7 @@ classdef readCnv < containers.Map & handle
     function dec = degMinToDec(~, deg, min, EWNS)
       
       % convert to decimal
-      dec = deg + min/60;
+      dec = deg + min/60.0;
       
       % add negative sign to decimal degrees if south of equator or west
       switch EWNS
@@ -509,7 +509,10 @@ classdef readCnv < containers.Map & handle
       end
       matFullName = fullfile(matFolder, matBaseName);
       % disp info on console
-      fprintf(1,'writing mat file: %s\n', matFullName);
+      % disp info on console
+      if self.echo
+        fprintf(1,'writing mat file: %s\n', matFullName);
+      end
       save( matFullName, 'self', '-v7.3');
     end % end of saveObj
     

@@ -92,14 +92,14 @@ netcdf.putAtt(root, varid, 'units', 'days since 1950-01-01T00:00:00Z');
 netcdf.defVarFill(root, varid, false, fillValue);
 netcdf.putVar(root, varid, self.Julian);
 
-varid = netcdf.defVar(root, 'LATITUDE', 'float', dimidY);
+varid = netcdf.defVar(root, 'LATITUDE', 'double', dimidY);
 netcdf.putAtt(root, varid, 'standard_name', 'latitude');
 netcdf.putAtt(root, varid, 'long_name', 'Station latitude');
 netcdf.putAtt(root, varid, 'units', 'degrees_north');
 netcdf.defVarFill(root, varid, false, fillValue);
 netcdf.putVar(root, varid, self.Latitude);
 
-varid = netcdf.defVar(root,'LONGITUDE','float', dimidX);
+varid = netcdf.defVar(root,'LONGITUDE','double', dimidX);
 netcdf.putAtt(root, varid,'standard_name','longitude');
 netcdf.putAtt(root, varid,'long_name','Station longitude');
 netcdf.putAtt(root, varid,'units','degrees_east');
@@ -111,9 +111,14 @@ raw = netcdf.defGrp(root, 'raw');
 netcdf.putAtt(raw, NC_GLOBAL,'comment', 'This group contains raw data')
 
 % insert data attributes and value using ordered keys
+% all data are save as double, there was trouble with float in unit test
+% First input:
+%   69.728301000000002
+% Second input:
+%   69.728302001953125
 for k = self.varNamesList
   key = char(k);
-  varid = netcdf.defVar(raw, key ,'float',[dimidZ, dimidT]);
+  varid = netcdf.defVar(raw, key ,'double',[dimidZ, dimidT]);
   netcdf.putAtt(raw, varid, 'name', key);
   % ex:  Oxygen, SBE 43, 2 [dov/dt] -> longName =  and unit = dov/dt
   str = self.varNames(key);

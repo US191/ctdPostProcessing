@@ -1,49 +1,55 @@
-classdef testReadCnv < TestCase
-  %testReadCnv
-  % runxunit('tests')
+classdef testRead < matlab.unittest.TestCase
+  %testReadNc
+  % import matlab.unittest.TestSuite
+  % suiteFolder = TestSuite.fromFolder('tests');
+  % result = run(suiteFolder);
   
   properties
-    cnvFilename;
+    cnvFilename
+    ncFilename
     cnvObj
+    ncObj
   end
   
-  methods
-    
-    % Constructor
-    %------------
-    function self = testReadCnv(testMethod)
-      self = self@TestCase(testMethod);
-      
-          % get the location of directory test class dynaload
+  methods(TestClassSetup )
+    function setup(testCase)
       pathStr = fileparts(mfilename('fullpath'));
       
       % construct test filename
-      self.cnvFilename = fullfile(pathStr, 'test.cnv');
-      self.cnvObj = readCnv(self.cnvFilename, true);
-      saveNc(self.cnvObj);
-      saveObj(self.cnvObj);
-      msg = sprintf('can''t locate %s file', self.cnvFilename);
-      assertEqual(self.cnvObj.fileName, self.cnvFilename , msg);
+      testCase.cnvFilename = fullfile(pathStr, 'test.cnv');
+      testCase.cnvObj = readCnv(testCase.cnvFilename, false);
+      saveNc(testCase.cnvObj);
+      saveObj(testCase.cnvObj);
+      testCase.ncFilename = fullfile(pathStr, 'test.nc');
+      testCase.ncObj = readNc(testCase.ncFilename);
+      msg = sprintf('can''t locate %s file', testCase.cnvFilename);
+      testCase.verifyEqual(testCase.cnvObj.fileName, testCase.cnvFilename , msg);
+    end
+  end
+  
+  methods(TestClassTeardown)
+    %     function teardown(testCase)
+    %     end
+  end
+  
+  methods (Test)
+    
+    function testProperties( testCase )
+      testCase.verifyEqual(testCase.cnvObj.Plateforme, 'THALASSA');
+      testCase.verifyEqual(testCase.cnvObj.Cruise, 'PIRATA-FR26');
+      testCase.verifyEqual(testCase.cnvObj.Profile, '1');
+      testCase.verifyEqual(testCase.cnvObj.Julian, testCase.ncObj.root('TIME'))
+      testCase.verifyEqual(testCase.cnvObj.Date, testCase.ncObj.root('TIME') + ...
+         datenum(1950, 1, 1));
+      testCase.verifyEqual(testCase.cnvObj.Latitude, testCase.ncObj.root('LATITUDE'));
+      testCase.verifyEqual(testCase.cnvObj.Longitude, testCase.ncObj.root('LONGITUDE'));
+      testCase.verifyEqual(testCase.cnvObj.CtdType, 'SBE 9 ');
+      testCase.verifyEqual(testCase.cnvObj.SeasaveVersion, '3.2');
+      testCase.verifyEqual(testCase.cnvObj.Header(1), '* Sea-Bird SBE 9 Data File:')
+      testCase.verifyEqual(testCase.cnvObj.Header(302), '# file_type = ascii');
     end
     
-    function setUp(self) 
-    end
-    
-    function testProperties( self )
-      assertEqual(self.cnvObj.Plateforme, 'THALASSA');
-      assertEqual(self.cnvObj.Cruise, 'PIRATA-FR26');
-      assertEqual(self.cnvObj.Profile, '1');
-      assertElementsAlmostEqual(self.cnvObj.Date, 736398.728414);
-      assertElementsAlmostEqual(self.cnvObj.Julian, 24174.728414);
-      assertElementsAlmostEqual(self.cnvObj.Latitude, 11.465000);
-      assertElementsAlmostEqual(self.cnvObj.Longitude, -23.00016667);
-      assertEqual(self.cnvObj.CtdType, 'SBE 9 ');
-      assertEqual(self.cnvObj.SeasaveVersion, '3.2');
-      assertEqual(self.cnvObj.Header(1), '* Sea-Bird SBE 9 Data File:')
-      assertEqual(self.cnvObj.Header(302), '# file_type = ascii');
-    end
-    
-    function testVarNames(self)
+     function testVarNames(testCase)
       theKeys = {'scan','timeJ','prDM','depSM','t090C','t190C','c0Sm','c1Sm',...
         'sbeox0V','sbeox1V','sbox1dVdT','sbox0dVdT','latitude','longitude',...
         'timeS','flECO-AFL','CStarTr0','sbox0MmKg','sbox1MmKg','sal00','sal11',...
@@ -63,15 +69,15 @@ classdef testReadCnv < TestCase
       
       for k = keys(theMap)
         key = char(k);
-        assertTrue(isKey(self.cnvObj.varNames,key), ...
+        testCase.assumeTrue(isKey(testCase.cnvObj.varNames,key), ...
           sprintf('The specified key: (%s) is not present in this container.',key));
-        assertEqual(theMap(key), self.cnvObj.varNames(key), ...
+        testCase.verifyEqual(theMap(key), testCase.cnvObj.varNames(key), ...
           sprintf('Value: (%s) is not equal for key: (%s) in this container.',...
           key, theMap(key)));
       end
-    end
+     end
     
-    function testSensors(self)
+        function testSensors(testCase)
       theKeys = {'Frequency 0, Temperature','Frequency 1, Conductivity',...
         'Frequency 2, Pressure, Digiquartz with TC',...
         'Frequency 3, Temperature, 2','Frequency 4, Conductivity, 2',...
@@ -84,26 +90,27 @@ classdef testReadCnv < TestCase
       
       for k = keys(theMap)
         key = char(k);
-        assertTrue(isKey(self.cnvObj.sensors, key), ...
+        testCase.assumeTrue(isKey(testCase.cnvObj.sensors, key), ...
           sprintf('The specified key: (%s) is not present in this container.',key));
-        assertEqual(theMap(key), self.cnvObj.sensors(key), ...
+        testCase.verifyEqual(theMap(key), testCase.cnvObj.sensors(key), ...
           sprintf('Value: (%s) is not equal for key: (%s) in this container.',...
           key, theMap(key)));
       end
-    end
+        end
     
-    % test inherited keys/values
-    function testData(self)
-      data = self.cnvObj;
+            % test inherited keys/values
+    function testData(testCase)
+      data = testCase.cnvObj;
       for k = keys(data)
         key = char(k);
         % test notations: data.sal00 and data('sal00')
-        assertEqual(size(data.(key)), size(data(key)),...
+       testCase.verifyEqual(size(data.(key)), size(data(key)),...
           sprintf('Invalid size for key: (%s).',key));
       end
       % test logical indexing
-      assertEqual(data.scan(1:4),[-234;504;2324;2723]);
+      testCase.verifyEqual(data.scan(1:4),[-234;504;2324;2723]);
     end
+    
     
   end
   

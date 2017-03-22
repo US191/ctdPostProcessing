@@ -18,19 +18,20 @@ classdef testReadNc < TestCase
     
     function setUp(self)
       
-      % get the location of directory test class dynaload
-      pathStr = fileparts(mfilename('fullpath'));
-      
-      % construct test filename
-      self.ncFilename = fullfile(pathStr, 'test.nc');
-      self.cnvObj     = fullfile(pathStr, 'test.cnv');
-      self.ncid = netcdf.open(self.ncFilename, 'NOWRITE');
-%       assertExceptionThrown(netcdf.open('dummy.nc', 'NOWRITE'),...
-%         'MATLAB:imagesci:validate:fileOpen');
+%       % get the location of directory test class dynaload
+%       pathStr = fileparts(mfilename('fullpath'));
+%       
+%       % construct test filename
+%       self.ncFilename = fullfile(pathStr, 'test.nc');
+%       cnvFilename     = fullfile(pathStr, 'test.cnv');
+%       self.ncid = netcdf.open(self.ncFilename, 'NOWRITE');
+%       self.cnvObj = readCnv(cnvFilename, false);
+% %       assertExceptionThrown(netcdf.open('dummy.nc', 'NOWRITE'),...
+% %         'MATLAB:imagesci:validate:fileOpen');
     end
     
     function tearDown(self)
-      netcdf.close(self.ncid);
+ %     netcdf.close(self.ncid);
     end
 
     
@@ -61,7 +62,15 @@ classdef testReadNc < TestCase
       assertTrue(logical(strfind(header, '* Sea-Bird SBE 9 Data File:')));
     end
     
-   
+    function testRawData(self)
+      info = ncinfo(self.ncFilename, 'raw');
+      for i = 1: length(info.Variables)
+        n = ncread(self.ncFilename, sprintf('raw/%s', info.Variables(i).Name));
+        v = self.cnvObj.(info.Variables(i).Name);
+        assertEqual(n, v);
+      end
+    end
+    
     
   end
   
