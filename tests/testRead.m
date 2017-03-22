@@ -1,4 +1,4 @@
-classdef testRead < matlab.unittest.TestCase
+classdef testRead < matlab.unittest.testCase
   %testReadNc
   % import matlab.unittest.TestSuite
   % suiteFolder = TestSuite.fromFolder('tests');
@@ -40,7 +40,7 @@ classdef testRead < matlab.unittest.TestCase
       testCase.verifyEqual(testCase.cnvObj.Profile, '1');
       testCase.verifyEqual(testCase.cnvObj.Julian, testCase.ncObj.root('TIME'))
       testCase.verifyEqual(testCase.cnvObj.Date, testCase.ncObj.root('TIME') + ...
-         datenum(1950, 1, 1));
+        datenum(1950, 1, 1));
       testCase.verifyEqual(testCase.cnvObj.Latitude, testCase.ncObj.root('LATITUDE'));
       testCase.verifyEqual(testCase.cnvObj.Longitude, testCase.ncObj.root('LONGITUDE'));
       testCase.verifyEqual(testCase.cnvObj.CtdType, 'SBE 9 ');
@@ -49,7 +49,7 @@ classdef testRead < matlab.unittest.TestCase
       testCase.verifyEqual(testCase.cnvObj.Header(302), '# file_type = ascii');
     end
     
-     function testVarNames(testCase)
+    function testVarNames(testCase)
       theKeys = {'scan','timeJ','prDM','depSM','t090C','t190C','c0Sm','c1Sm',...
         'sbeox0V','sbeox1V','sbox1dVdT','sbox0dVdT','latitude','longitude',...
         'timeS','flECO-AFL','CStarTr0','sbox0MmKg','sbox1MmKg','sal00','sal11',...
@@ -75,9 +75,9 @@ classdef testRead < matlab.unittest.TestCase
           sprintf('Value: (%s) is not equal for key: (%s) in this container.',...
           key, theMap(key)));
       end
-     end
+    end
     
-        function testSensors(testCase)
+    function testSensors(testCase)
       theKeys = {'Frequency 0, Temperature','Frequency 1, Conductivity',...
         'Frequency 2, Pressure, Digiquartz with TC',...
         'Frequency 3, Temperature, 2','Frequency 4, Conductivity, 2',...
@@ -96,19 +96,42 @@ classdef testRead < matlab.unittest.TestCase
           sprintf('Value: (%s) is not equal for key: (%s) in this container.',...
           key, theMap(key)));
       end
-        end
+    end
     
-            % test inherited keys/values
+    % test inherited keys/values
     function testData(testCase)
       data = testCase.cnvObj;
       for k = keys(data)
         key = char(k);
         % test notations: data.sal00 and data('sal00')
-       testCase.verifyEqual(size(data.(key)), size(data(key)),...
+        testCase.verifyEqual(size(data.(key)), size(data(key)),...
           sprintf('Invalid size for key: (%s).',key));
       end
       % test logical indexing
       testCase.verifyEqual(data.scan(1:4),[-234;504;2324;2723]);
+    end
+    
+    function testGlobalAttributes( testCase )
+      testCase.verifyEqual(ncreadatt(testCase.ncFilename,'/', 'ctdtype'), 'SBE 9 ');
+      testCase.verifyEqual(ncreadatt(testCase.ncFilename,'/', 'plateforme'), 'THALASSA');
+      testCase.verifyEqual(ncreadatt(testCase.ncFilename,'/', 'cruise'), 'PIRATA-FR26');
+      testCase.verifyEqual(ncreadatt(testCase.ncFilename,'/', 'date_type'), 'OceanSITES profile data');
+      testCase.verifyEqual(ncreadatt(testCase.ncFilename,'/', 'created_by'), 'jgrelet');
+      testCase.verifyEqual(ncreadatt(testCase.ncFilename,'/', 'format_version'), '1.2');
+      testCase.verifyEqual(ncreadatt(testCase.ncFilename,'/', 'netcdf_version'), '4.3.3.1');
+      testCase.verifyEqual(ncreadatt(testCase.ncFilename,'/', 'Conventions'), 'CF-1.6, OceanSITES-1.2');
+      testCase.verifyEqual(ncreadatt(testCase.ncFilename,'/', 'comment'), 'Data read from readCnv program');
+      header = ncreadatt(testCase.ncFilename,'/', 'header');
+      testCase.verifyTrue(logical(strfind(header, '* Sea-Bird SBE 9 Data File:')));
+    end
+    
+    function testRawData(testCase)
+      info = ncinfo(testCase.ncFilename, 'raw');
+      for i = 1: length(info.Variables)
+        n = ncread(testCase.ncFilename, sprintf('raw/%s', info.Variables(i).Name));
+        v = testCase.cnvObj.(info.Variables(i).Name);
+        testCase.verifyEqual(n, v);
+      end
     end
     
     
