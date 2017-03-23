@@ -230,7 +230,7 @@ classdef readCnv < containers.Map & handle
         % ex: * Sea-Bird SBE 9 Data File:
         % ex: * Sea-Bird SBE19plus Data File:
         match = regexp( tline,...
-          '^*\s*Sea-Bird\s*(.+)\s*Data File:', 'tokens');
+          '^*\s*Sea-Bird\s*(.+?)\s*Data File:', 'tokens');
         if ~isempty(match)
           self.CtdType = match{1}{1};
           continue
