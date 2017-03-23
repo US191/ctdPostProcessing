@@ -18,21 +18,21 @@ classdef readNc  < dynamicprops
   %    5.381818771362305
   %    5.381879806518555
   
-%   Global Attributes:
-%            fileName       = 'C:\git\ctdPostProcessing\examples\fr26\data\cnv\dfr26001.cnv'
-%            ctdType        = 'SBE 9 '
-%            seasaveVersion = '3.2'
-%            plateforme     = 'THALASSA'
-%            cruise         = 'PIRATA-FR26'
-%            date_created   = '2017-03-20T12:04:10Z'
-%            created_by     = 'jgrelet'
-%            date_type      = 'OceanSITES profile data'
-%            format_version = '1.2'
-%            netcdf_version = '4.3.3.1'
-%            Conventions    = 'CF-1.6, OceanSITES-1.2'
-%            comment        = 'Data read from readCnv program'
-%            header         = '* Sea-Bird SBE 9 Data File:
-
+  %   Global Attributes:
+  %            fileName       = 'C:\git\ctdPostProcessing\examples\fr26\data\cnv\dfr26001.cnv'
+  %            ctdType        = 'SBE 9 '
+  %            seasaveVersion = '3.2'
+  %            plateforme     = 'THALASSA'
+  %            cruise         = 'PIRATA-FR26'
+  %            date_created   = '2017-03-20T12:04:10Z'
+  %            created_by     = 'jgrelet'
+  %            date_type      = 'OceanSITES profile data'
+  %            format_version = '1.2'
+  %            netcdf_version = '4.3.3.1'
+  %            Conventions    = 'CF-1.6, OceanSITES-1.2'
+  %            comment        = 'Data read from readCnv program'
+  %            header         = '* Sea-Bird SBE 9 Data File:
+  
   properties   (Access = private)
     fileName
     echo        = true               % default
@@ -64,7 +64,7 @@ classdef readNc  < dynamicprops
       end
       if nargin == 2 && islogical(varargin{1})
         self.echo = varargin{1};
-      end     
+      end
       
       % read informations fron netcdf file
       info = ncinfo(self.fileName);
@@ -109,19 +109,31 @@ classdef readNc  < dynamicprops
     function disp(self)
       
       % display  properties
+      fprintf(1, 'Global Attributes:\n');
       prop = properties(self);
       % decrement loop
       for i = length(prop) : -1 : 1
         property = prop{i};
         if isa(self.(property), 'char')
-          fprintf('\t%s:          %s\n', property, self.(property));
+          match = regexp(self.(property), '^(.*?)\n', 'tokens');
+          if ~isempty(match)
+            fprintf('\t%-20s:\t%-40s\n', property, ...
+              strcat(match{1}{1}, ' ...'));
+            fprintf('\t%+27s\n', '...');
+          else
+            fprintf('\t%-20s:\t%-40s\n', property, self.(property));
+          end
         end
-        
       end
-      for i = length(prop) : -1 : 1
+      fprintf('\nGroups:\n');
+      for i = 1 : length(prop)
         property = prop{i};
         if isobject(self.(property))
-          disp(self.(property));
+          fprintf(1, '\t/%s/\n', property);
+          theKey = self.(property).keys;
+          for i = 1 : length(theKey)
+            fprintf(1, '\t\t%s\n', theKey{i});
+          end
         end
       end
     end
@@ -139,14 +151,7 @@ classdef readNc  < dynamicprops
         case '.'
           % implement obj.PropertyName
           if length(s) == 1
-            switch s.subs
-              case { 'fileName','ctdType','seasaveVersion','plateforme',...
-                  'cruise','date_created','created_by','date_type','format_version',...
-                  'netcdf_version','Conventions','comment','header'}
-                sref = self.(s.subs);
-              otherwise
-                sref = self.(s(1).subs);
-            end
+            sref = self.(s(1).subs);
           elseif length(s) == 2 && strcmp(s(2).type,'.')
             switch s(2).subs
               % nc.raw.keys
