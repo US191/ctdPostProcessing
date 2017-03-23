@@ -1,5 +1,6 @@
 classdef TReadAll < matlab.unittest.TestCase
   %TReadAll
+  % example:
   % import matlab.unittest.TestSuite
   % suiteFolder = TestSuite.fromFolder('tests');
   % result = run(suiteFolder);
@@ -11,7 +12,13 @@ classdef TReadAll < matlab.unittest.TestCase
     ncObj
   end
   
+  % Each method in that block is identified as a method responsible for setting 
+  % up a test fixture that is shared over all test methods in that class.
   methods(TestClassSetup )
+    
+    % setup read seadird cnv file and save result in mat and netcdf files
+    % used inside methods test
+    % -------------------------------------------------------------------
     function setup(testCase)
       pathStr = fileparts(mfilename('fullpath'));
       
@@ -27,13 +34,20 @@ classdef TReadAll < matlab.unittest.TestCase
     end
   end
   
+  % Each method in that block is identified as a method of that block is 
+  % identified as a method responsible for tearing down over all test methods 
+  % in that class.
   methods(TestClassTeardown)
     %     function teardown(testCase)
     %     end
   end
   
+  % method block to contain test methods
+  % ------------------------------------
   methods (Test)
     
+    % test and compare cnv file read with readCnv class with hardcoded value
+    % ---------------------------------------------------------------------
     function testProperties( testCase )
       testCase.verifyEqual(testCase.cnvObj.Plateforme, 'THALASSA');
       testCase.verifyEqual(testCase.cnvObj.Cruise, 'PIRATA-FR26');
@@ -43,12 +57,14 @@ classdef TReadAll < matlab.unittest.TestCase
         datenum(1950, 1, 1));
       testCase.verifyEqual(testCase.cnvObj.Latitude, testCase.ncObj.root('LATITUDE'));
       testCase.verifyEqual(testCase.cnvObj.Longitude, testCase.ncObj.root('LONGITUDE'));
-      testCase.verifyEqual(testCase.cnvObj.CtdType, 'SBE 9 ');
+      testCase.verifyEqual(testCase.cnvObj.CtdType, 'SBE 9');
       testCase.verifyEqual(testCase.cnvObj.SeasaveVersion, '3.2');
       testCase.verifyEqual(testCase.cnvObj.Header(1), '* Sea-Bird SBE 9 Data File:')
       testCase.verifyEqual(testCase.cnvObj.Header(302), '# file_type = ascii');
     end
     
+    % test and compare cnv file read with readCnv class with hardcoded value
+    % ---------------------------------------------------------------------
     function testVarNames(testCase)
       theKeys = {'scan','timeJ','prDM','depSM','t090C','t190C','c0Sm','c1Sm',...
         'sbeox0V','sbeox1V','sbox1dVdT','sbox0dVdT','latitude','longitude',...
@@ -77,6 +93,8 @@ classdef TReadAll < matlab.unittest.TestCase
       end
     end
     
+    % test and compare cnv file read with readCnv class with hardcoded value
+    % ---------------------------------------------------------------------
     function testSensors(testCase)
       theKeys = {'Frequency 0, Temperature','Frequency 1, Conductivity',...
         'Frequency 2, Pressure, Digiquartz with TC',...
@@ -86,6 +104,7 @@ classdef TReadAll < matlab.unittest.TestCase
         'A/D voltage 3, Fluorometer, WET Labs ECO-AFL/FL','A/D voltage 4, Altimeter'};
       theValues = {'6083','4509','1263','6086','4510','3261','3265','CTS1210DR',...
         'FLRTD-1367','61768'};
+      
       theMap = containers.Map( theKeys, theValues,'UniformValues',true);
       
       for k = keys(theMap)
@@ -99,6 +118,7 @@ classdef TReadAll < matlab.unittest.TestCase
     end
     
     % test inherited keys/values
+    % --------------------------
     function testData(testCase)
       data = testCase.cnvObj;
       for k = keys(data)
@@ -111,8 +131,11 @@ classdef TReadAll < matlab.unittest.TestCase
       testCase.verifyEqual(data.scan(1:4),[-234;504;2324;2723]);
     end
     
+    % test and compare netcdf file read with native Matlab netcdf functions
+    % with hardcoded value
+    % ---------------------------------------------------------------------
     function testGlobalAttributes( testCase )
-      testCase.verifyEqual(ncreadatt(testCase.ncFilename,'/', 'ctdtype'), 'SBE 9 ');
+      testCase.verifyEqual(ncreadatt(testCase.ncFilename,'/', 'ctdtype'), 'SBE 9');
       testCase.verifyEqual(ncreadatt(testCase.ncFilename,'/', 'plateforme'), 'THALASSA');
       testCase.verifyEqual(ncreadatt(testCase.ncFilename,'/', 'cruise'), 'PIRATA-FR26');
       testCase.verifyEqual(ncreadatt(testCase.ncFilename,'/', 'date_type'), 'OceanSITES profile data');
@@ -125,6 +148,9 @@ classdef TReadAll < matlab.unittest.TestCase
       testCase.verifyTrue(logical(strfind(header, '* Sea-Bird SBE 9 Data File:')));
     end
     
+     % test and compare netcdf file read with native Matlab netcdf
+     % functions with result from readNc class 
+     % -------------------------------------------------------------
     function testRawData(testCase)
       info = ncinfo(testCase.ncFilename, 'raw');
       for i = 1: length(info.Variables)

@@ -508,8 +508,7 @@ classdef readCnv < containers.Map & handle
         mkdir(matFolder)
       end
       matFullName = fullfile(matFolder, matBaseName);
-      % disp info on console
-      % disp info on console
+      % display info on console
       if self.echo
         fprintf(1,'writing mat file: %s\n', matFullName);
       end
