@@ -18,13 +18,21 @@ read file: tests/test.cnv
 
 cnv = 
 	Cruise:          PIRATA-FR26
+	
 	Plateforme:      THALASSA
+	
 	Profile:         1
+	
 	Date:            2016-03-09T17:28:55Z
+	
 	Julian:          24174.728414
+	
 	Latitude:        11.46500000
+	
 	Longitude:       -23.00016667
+	
 	CtdType:         SBE 9
+	
 	SeasaveVersion:  3.2
 
 varNames:  27×2 cell array
@@ -101,31 +109,48 @@ sensors:  10×2 cell array
 >> keys(cnv)
 
 ans =
+
   1×27 cell array
+  
   Columns 1 through 7
+  
     'CStarTr0'    'c0Sm'    'c1Sm'    'depSM'    'flECO-AFL'    'flag'    'latitude'
+    
   Columns 8 through 14
+  
     'longitude'    'nbin'    'prDM'    'sal00'    'sal11'    'sbeox0V'    'sbeox1V'
+    
  ...
  
 >> values(cnv)
 
 ans =
+
   1×27 cell array
+  
   Columns 1 through 5
+  
     [24×1 double]    [24×1 double]    [24×1 double]    [24×1 double]    [24×1 double]
+    
 ...
  
 >> cnv.t090C
 
 ans =
    24.7243
+   
    24.7270
+   
    24.7248
+   
    24.7249
+   
    24.7255
+   
    24.7260
+   
    24.7268
+   
    ...
  
 >> cnv('t090C')    % same
@@ -133,31 +158,50 @@ ans =
 >> cnv.t090C(1:4)
 
 ans =
+
    24.7243
+   
    24.7270
+   
    24.7248
+   
    24.7249
  
  >> nc = readNc('tests/test.nc')
 nc = 
 
 Global Attributes:
-	seasaveversion      :	3.2                                     
-	comment             :	Data read from readCnv program          
-	Conventions         :	CF-1.6, OceanSITES-1.2                  
+
+	seasaveversion      :	3.2 
+	
+	comment             :	Data read from readCnv program 
+	
+	Conventions         :	CF-1.6, OceanSITES-1.2     
+	
 	filename            :	C:\git\ctdPostProcessing\tests\test.cnv 
-	created_by          :	jgrelet                                 
-	date_created        :	2017-03-24T10:36:58Z                    
-	ctdtype             :	SBE 9                                   
-	format_version      :	1.2                                     
-	cruise              :	PIRATA-FR26                             
-	header              :	* Sea-Bird SBE 9 Data File: ...         
+	
+	created_by          :	jgrelet              
+	
+	date_created        :	2017-03-24T10:36:58Z  
+	
+	ctdtype             :	SBE 9           
+	
+	format_version      :	1.2            
+	
+	cruise              :	PIRATA-FR26     
+	
+	header              :	* Sea-Bird SBE 9 Data File: ...   
+	
 	                        ...
-	plateforme          :	THALASSA                                
-	netcdf_version      :	4.3.3.1                                 
-	date_type           :	OceanSITES profile data                 
+	plateforme          :	THALASSA    
+	
+	netcdf_version      :	4.3.3.1      
+	
+	date_type           :	OceanSITES profile data   
+	
 
 Groups:
+
 	/root/
 		LATITUDE
 		LONGITUDE
@@ -179,6 +223,8 @@ Groups:
  ....
  
  >> nc.root.LATITUDE
+ 
 ans =
+
    11.4650
  
