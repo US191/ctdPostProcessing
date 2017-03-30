@@ -13,8 +13,7 @@ runTests.m: tests unitaires
  
   r = readCnv  use uigetfile to select one or more files
   
-  >> cnv = readCnv('tests/test.cnv')
-read file: tests/test.cnv
+ cnv = readCnv('tests/test.cnv')
 
 cnv = 
 	Cruise:          PIRATA-FR26
@@ -106,7 +105,7 @@ sensors:  10×2 cell array
 	'nbin'         			[24 x 1]
 	'flag'         			[24 x 1] 
  
->> keys(cnv)
+keys(cnv)
 
 ans =
 
@@ -122,7 +121,7 @@ ans =
     
  ...
  
->> values(cnv)
+values(cnv)
 
 ans =
 
@@ -134,7 +133,7 @@ ans =
     
 ...
  
->> cnv.t090C
+cnv.t090C
 
 ans =
    24.7243
@@ -153,9 +152,9 @@ ans =
    
    ...
  
->> cnv('t090C')    % same
+cnv('t090C')    % same
 
->> cnv.t090C(1:4)
+cnv.t090C(1:4)
 
 ans =
 
@@ -167,7 +166,8 @@ ans =
    
    24.7249
  
- >> nc = readNc('tests/test.nc')
+nc = readNc('tests/test.nc')
+
 nc = 
 
 Global Attributes:
@@ -222,9 +222,19 @@ Groups:
 		sal11
  ....
  
- >> nc.root.LATITUDE
+nc.root.LATITUDE
  
 ans =
 
    11.4650
+   
+nc.raw.sal00(1:4)
+
+ans =
+
+   35.7712
+   35.7715
+   35.7717
+   35.7717
+   
  
