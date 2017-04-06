@@ -1,4 +1,5 @@
 # ctdPostProcessing
+
 ----
 ## Matlab code used for:
 
@@ -9,10 +10,11 @@
 * **readNc.m:**   read NetCDF file
 
 * **runTests.m:** tests unitaires
+
 ---- 
 ## Examples:
  
-  **r = readCnv**  use uigetfile to select a file
+**r = readCnv**  use uigetfile to select a file
   
     >> cnv = readCnv('tests/test.cnv')
 
@@ -150,7 +152,7 @@
     24.7249
  
 ---- 
-**nc= readNc**  
+**nc = readNc**  
 
 use uigetfile to select file
 
