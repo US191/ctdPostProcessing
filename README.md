@@ -1,18 +1,18 @@
 # ctdPostProcessing
-
+----
 ## Matlab code used for:
 
-* **process.m**:  processing raw Seabird CTD .hex cast to .cnv file
+* **process.m:**  processing raw Seabird CTD .hex cast to .cnv file
 
-* readCnv.m:  read seabird cnv file(s) using containers.Map object, save result as .mat or NetCDF 4 files
+* **readCnv.m:**  read seabird cnv file(s) using containers.Map object, save result as .mat or NetCDF 4 files
 
-* readNc.m:   read NetCDF file
+* **readNc.m:**   read NetCDF file
 
-* runTests.m: tests unitaires
- 
+* **runTests.m:** tests unitaires
+---- 
 ## Examples:
  
-  **r = readCnv**  use uigetfile to select one or more files
+  **r = readCnv**  use uigetfile to select a file
   
     >> cnv = readCnv('tests/test.cnv')
 
@@ -149,6 +149,11 @@
     24.7248  
     24.7249
  
+---- 
+**nc= readNc**  
+
+use uigetfile to select file
+
     >> nc = readNc('tests/test.nc')
 
     nc = 
@@ -207,6 +212,9 @@
     35.7715
     35.7717
     35.7717
+
+----
+**Testing**
 
     >> >> runtests
     Running TReadAll
