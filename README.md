@@ -103,20 +103,20 @@
     >> keys(cnv)
 
     ans =
-    1×27 cell array 
-    Columns 1 through 7 
-    'CStarTr0'    'c0Sm'    'c1Sm'    'depSM'    'flECO-AFL'    'flag'    'latitude'   
-    Columns 8 through 14
-    'longitude'    'nbin'    'prDM'    'sal00'    'sal11'    'sbeox0V'    'sbeox1V'
-    ...
+     1×27 cell array 
+     Columns 1 through 7 
+     'CStarTr0'    'c0Sm'    'c1Sm'    'depSM'    'flECO-AFL'    'flag'    'latitude'   
+     Columns 8 through 14
+     'longitude'    'nbin'    'prDM'    'sal00'    'sal11'    'sbeox0V'    'sbeox1V'
+     ...
  
     >> values(cnv)
 
     ans =
-    1×27 cell array  
-    Columns 1 through 5
-    [24×1 double]    [24×1 double]    [24×1 double]    [24×1 double]    [24×1 double]
-    ...
+     1×27 cell array  
+     Columns 1 through 5
+     [24×1 double]    [24×1 double]    [24×1 double]    [24×1 double]    [24×1 double]
+     ...
  
     >> cnv.t090C
 
@@ -191,15 +191,15 @@ use uigetfile to select file
     >> nc.root.LATITUDE
  
     ans =
-    11.4650
+     11.4650
    
     >> nc.raw.sal00(1:4)
 
     ans =
-    35.7712
-    35.7715
-    35.7717
-    35.7717
+     35.7712
+     35.7715
+     35.7717
+     35.7717
 
 ----
 **Testing**
