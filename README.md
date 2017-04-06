@@ -140,6 +140,152 @@
      24.7248  
      24.7249
  
+**Get sensors name**
+
+    >> values(r.sensors)
+
+    ans =
+     1×10 cell array
+     Columns 1 through 7
+    '3261'    '3265'    'CTS1210DR'    'FLRTD-1367'    '61768'    '6083'    '4509'
+    Columns 8 through 10
+    '1263'    '6086'    '4510'
+
+** get serial number for a sensor**
+
+    >> r.sensors.('A/D voltage 0, Oxygen, SBE 43')
+
+    ans =
+     3261
+
+** save object to mat file**
+
+    >> saveObj(r)
+     writing mat file: tests\test.mat
+     
+** save object to NetCDF file**     
+     
+    >> saveNc(r)
+
+writing netcdf file: tests\test.nc
+
+** use high level Matlab function to display and get data from NetCDF file**
+
+    >> ncdisp('tests/test.nc')
+    Source:
+           C:\git\ctdPostProcessing\tests\test.nc
+    Format:
+           netcdf4
+    Global Attributes:
+           filename       = 'tests/test.cnv'
+           ctdtype        = 'SBE 9'
+           seasaveversion = '3.2'
+           plateforme     = 'THALASSA'
+           cruise         = 'PIRATA-FR26'
+           date_created   = '2017-04-06T14:51:38Z'
+           created_by     = 'jgrelet'
+           date_type      = 'OceanSITES profile data'
+           format_version = '1.2'
+           netcdf_version = '4.3.3.1'
+           Conventions    = 'CF-1.6, OceanSITES-1.2'
+           comment        = 'Data read from readCnv program'
+           header         = '* Sea-Bird ....
+           ...
+	   
+    Dimensions:
+           TIME      = 1
+           LATITUDE  = 1
+           LONGITUDE = 1
+           DEPTH     = 24
+    Variables:
+      TIME     
+           Size:       1x1
+           Dimensions: TIME
+           Datatype:   double
+           Attributes:
+                       standard_name = 'time'
+                       long_name     = 'Time of measurements'
+                       units         = 'days since 1950-01-01T00:00:00Z'
+                       _FillValue    = -9999
+      LATITUDE 
+           Size:       1x1
+           Dimensions: LATITUDE
+           Datatype:   double
+           Attributes:
+                       standard_name = 'latitude'
+                       long_name     = 'Station latitude'
+                       units         = 'degrees_north'
+                       _FillValue    = -9999
+      LONGITUDE
+           Size:       1x1
+           Dimensions: LONGITUDE
+           Datatype:   double
+           Attributes:
+                       standard_name = 'longitude'
+                       long_name     = 'Station longitude'
+                       units         = 'degrees_east'
+                       _FillValue    = -9999
+    Groups:
+      /raw/
+          Attributes:
+                   comment = 'This group contains raw data'
+          Variables:
+              scan     
+                   Size:       24x1
+                   Dimensions: /DEPTH,/TIME
+                   Datatype:   double
+                   Attributes:
+                               name       = 'scan'
+                               long_name  = 'Scan Count'
+                               _FillValue = -9999
+              timeJ    
+                   Size:       24x1
+                   Dimensions: /DEPTH,/TIME
+                   Datatype:   double
+                   Attributes:
+                               name       = 'timeJ'
+                               long_name  = 'Julian Days'
+                               _FillValue = -9999
+              prDM     
+                   Size:       24x1
+                   Dimensions: /DEPTH,/TIME
+                   Datatype:   double
+                   Attributes:
+                               name       = 'prDM'
+                               long_name  = 'Pressure, Digiquartz'
+                               units      = 'db'
+                               _FillValue = -9999
+              depSM    
+                   Size:       24x1
+                   Dimensions: /DEPTH,/TIME
+                   Datatype:   double
+                   Attributes:
+                               name       = 'depSM'
+                               long_name  = 'Depth'
+                               units      = 'salt water, m'
+                               _FillValue = -9999
+              t090C    
+                   Size:       24x1
+                   Dimensions: /DEPTH,/TIME
+                   Datatype:   double
+                   Attributes:
+                               name       = 't090C'
+                               long_name  = 'Temperature'
+                               units      = 'ITS-90, deg C'
+                               _FillValue = -9999
+	      ...
+	      ...
+	      % end of file
+	      
+    >> t = ncread('tests/test.nc', 'raw/t090C')
+
+    t =
+     24.7243
+     24.7270
+     24.7248
+     24.7249    	      
+     ...
+     
 ---- 
 **nc = readNc**  
 
