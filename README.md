@@ -2,7 +2,7 @@
 
 ## Matlab code used for:
 
-* process.m:  processing raw Seabird CTD .hex cast to .cnv file
+* **process.m**:  processing raw Seabird CTD .hex cast to .cnv file
 
 * readCnv.m:  read seabird cnv file(s) using containers.Map object, save result as .mat or NetCDF 4 files
 
