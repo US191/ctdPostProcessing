@@ -9,7 +9,7 @@
 
 * **readNc.m:**   read NetCDF file
 
-* **runTests.m:** tests unitaires
+* **runtests.m:** tests unitaires
 
 ---- 
 ## Examples:
