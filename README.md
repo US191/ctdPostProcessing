@@ -218,7 +218,7 @@ use uigetfile to select file
 ----
 **Testing**
 
-    >> >> runtests
+    >> runtests
     Running TReadAll
     ......
     Done TReadAll
