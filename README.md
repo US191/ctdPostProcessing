@@ -103,29 +103,19 @@
     >> keys(cnv)
 
     ans =
-
-    1×27 cell array
-  
-    Columns 1 through 7
-  
-    'CStarTr0'    'c0Sm'    'c1Sm'    'depSM'    'flECO-AFL'    'flag'    'latitude'
-    
+    1×27 cell array 
+    Columns 1 through 7 
+    'CStarTr0'    'c0Sm'    'c1Sm'    'depSM'    'flECO-AFL'    'flag'    'latitude'   
     Columns 8 through 14
-  
     'longitude'    'nbin'    'prDM'    'sal00'    'sal11'    'sbeox0V'    'sbeox1V'
-    
     ...
  
     >> values(cnv)
 
     ans =
-
-    1×27 cell array
-  
+    1×27 cell array  
     Columns 1 through 5
-  
     [24×1 double]    [24×1 double]    [24×1 double]    [24×1 double]    [24×1 double]
-    
     ...
  
     >> cnv.t090C
@@ -137,8 +127,7 @@
      24.7249 
      24.7255
      24.7260
-     24.7268
-   
+     24.7268   
     ...
  
     >> cnv('t090C')    % same
@@ -146,10 +135,10 @@
     cnv.t090C(1:4)
 
     ans =
-    24.7243  
-    24.7270  
-    24.7248  
-    24.7249
+     24.7243  
+     24.7270  
+     24.7248  
+     24.7249
  
 ---- 
 **nc = readNc**  
@@ -177,7 +166,6 @@ use uigetfile to select file
 	netcdf_version      :	4.3.3.1      
 	date_type           :	OceanSITES profile data   
 	
-
     Groups:
 
 	/root/
@@ -203,13 +191,11 @@ use uigetfile to select file
     >> nc.root.LATITUDE
  
     ans =
-
     11.4650
    
     >> nc.raw.sal00(1:4)
 
     ans =
-
     35.7712
     35.7715
     35.7717
