@@ -131,8 +131,8 @@ classdef readNc  < dynamicprops
         if isobject(self.(property))
           fprintf(1, '\t/%s/\n', property);
           theKey = self.(property).keys;
-          for i = 1 : length(theKey)
-            fprintf(1, '\t\t%s\n', theKey{i});
+          for j = 1 : length(theKey)
+            fprintf(1, '\t\t%s\n', theKey{j});
           end
         end
       end
