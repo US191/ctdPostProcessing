@@ -3,9 +3,9 @@ classdef readCnv < containers.Map & handle
   %
   %   Examples:
   %
-  % r = readCnv  use uigetfile to select one or more files
-  % r = readCnv('C:\git\ctdPostProcessing\examples\fr26\data\cnv\dfr26001.cnv')
-  % read file: C:\git\ctdPostProcessing\examples\fr26\data\cnv\dfr26001.cnv
+  % r = readCnv  use uigetfile to select a file
+  % r = readCnv('tests/test.cnv')
+  % read file: tests/test.cnv
   %
   % r =
   %
@@ -136,7 +136,7 @@ classdef readCnv < containers.Map & handle
   % * Temperature SN = 6083
   % ...
   % % run unit test framework :
-  % runxunit('tests')
+  % tuntests
   %
   % TODOS:
   % add interactive plots with QC
