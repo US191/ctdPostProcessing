@@ -141,7 +141,7 @@ classdef TReadAll < matlab.unittest.TestCase
       testCase.verifyEqual(ncreadatt(testCase.ncFilename,'/', 'date_type'), 'OceanSITES profile data');
       testCase.verifyEqual(ncreadatt(testCase.ncFilename,'/', 'created_by'), 'jgrelet');
       testCase.verifyEqual(ncreadatt(testCase.ncFilename,'/', 'format_version'), '1.2');
-      testCase.verifyEqual(ncreadatt(testCase.ncFilename,'/', 'netcdf_version'), '4.3.3.1');
+      testCase.verifyEqual(ncreadatt(testCase.ncFilename,'/', 'netcdf_version'), netcdf.inqLibVers);
       testCase.verifyEqual(ncreadatt(testCase.ncFilename,'/', 'Conventions'), 'CF-1.6, OceanSITES-1.2');
       testCase.verifyEqual(ncreadatt(testCase.ncFilename,'/', 'comment'), 'Data read from readCnv program');
       header = ncreadatt(testCase.ncFilename,'/', 'header');
