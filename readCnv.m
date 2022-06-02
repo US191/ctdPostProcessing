@@ -1,3 +1,4 @@
+
 classdef readCnv < containers.Map & handle
   %readCnv construct object and read seabird cnv file
   %
@@ -146,7 +147,7 @@ classdef readCnv < containers.Map & handle
   properties   (Access = private)
     fileName
     echo        = true               % default
-    varList     =  containers.Map
+    varList     
     % the iteration order over containers.Maps is ordered.
     % these properties are used to store keys
     varNamesList = {}
@@ -166,9 +167,9 @@ classdef readCnv < containers.Map & handle
     Longitude
     Plateforme
     Cruise
-    Header      =  containers.Map('KeyType','int32','ValueType','char')
-    varNames    =  containers.Map
-    sensors     =  containers.Map
+    Header      
+    varNames   
+    sensors    
   end
   
   methods % public methods
@@ -177,6 +178,11 @@ classdef readCnv < containers.Map & handle
     % --------------------------------
     function self = readCnv(fileName, varargin)
       
+      self.varList  =  containers.Map;
+      self.Header   =  containers.Map('KeyType','int32','ValueType','char');
+      self.varNames =  containers.Map;
+      self.sensors  =  containers.Map;
+
       % remove previous existing leys
       remove(self.varList,keys(self.varList));
       
@@ -562,4 +568,3 @@ classdef readCnv < containers.Map & handle
   end % end of static methods
   
 end % end of class readCnv
-
