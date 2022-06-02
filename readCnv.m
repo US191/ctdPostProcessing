@@ -177,6 +177,9 @@ classdef readCnv < containers.Map & handle
     % --------------------------------
     function self = readCnv(fileName, varargin)
       
+      % remove previous existing leys
+      remove(self.varList,keys(self.varList));
+      
       % pre initialization - select filename
       if nargin < 1 || isempty(fileName)
         [fileName, pathName] = uigetfile({'*.cnv','Seabird cnv (*.cnv)'},...
